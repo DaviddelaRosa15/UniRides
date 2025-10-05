@@ -1,15 +1,64 @@
+### Android Studio ###
 *.iml
-.gradle
-/local.properties
+.idea/
+.gradle/
+local.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+
+### Build Folders ###
+build/
+app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+### OS/Editor Files ###
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+Thumbs.db
+*.swp
+*.swo
+
+### Gradle Wrapper ###
+gradle-wrapper.jar
+gradle-wrapper.properties
+gradlew
+gradlew.bat
+
+### Java/Kotlin ###
+*.class
+*.jar
+*.war
+*.ear
+*.apk
+*.ap_
+*.dex
+*.o
+*.so
+*.bin
+
+### Android Studio Navigation Editor temp files ###
+navigation.json
+
+### Crashlytics/Fabric ###
+crashlytics-build.properties
+fabric.properties
+
+### Miscellaneous ###
+*.log
+*.hprof
+*.keystore
+*.jks
+*.pem
+*.orig
+*.rej
+*.bak
+*.tmp
+*.temp
+
+# Google Services (Firebase)
+**/google-services.json
