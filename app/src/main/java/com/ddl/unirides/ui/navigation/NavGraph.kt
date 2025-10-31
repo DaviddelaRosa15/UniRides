@@ -1,0 +1,200 @@
+package com.ddl.unirides.ui.navigation
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.ddl.unirides.ui.login.LoginScreen
+
+/**
+ * Grafo de navegación principal de la aplicación
+ *
+ * @param navController Controlador de navegación
+ * @param startDestination Destino inicial (Login o Home según el estado de autenticación)
+ */
+@Composable
+fun NavGraph(
+    navController: NavHostController,
+    startDestination: String
+) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        // ==================== AUTENTICACIÓN ====================
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onNavigateToSignUp = {
+                    navController.navigate(Screen.SignUp.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.SignUp.route) {
+            // TODO: Implementar SignUpScreen
+            PlaceholderScreen(
+                screenName = "SignUp",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== HOME ====================
+        composable(Screen.Home.route) {
+            // TODO: Implementar HomeScreen
+            PlaceholderScreen(
+                screenName = "Home",
+                onNavigate = {
+                    navController.navigate(Screen.Search.route)
+                }
+            )
+        }
+
+        // ==================== BÚSQUEDA DE VIAJES ====================
+        composable(Screen.Search.route) {
+            // TODO: Implementar SearchScreen
+            PlaceholderScreen(
+                screenName = "Search",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== OFRECER VIAJE ====================
+        composable(Screen.Offer.route) {
+            // TODO: Implementar OfferScreen
+            PlaceholderScreen(
+                screenName = "Offer",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== LISTA DE CHATS ====================
+        composable(Screen.ChatList.route) {
+            // TODO: Implementar ChatListScreen
+            PlaceholderScreen(
+                screenName = "Chat List",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== DETALLE DE CHAT ====================
+        composable(
+            route = Screen.ChatDetail.route,
+            arguments = listOf(
+                navArgument("chatId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            // TODO: Implementar ChatDetailScreen
+            PlaceholderScreen(
+                screenName = "Chat Detail: $chatId",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== PERFIL DE USUARIO ====================
+        composable(Screen.Profile.route) {
+            // TODO: Implementar ProfileScreen
+            PlaceholderScreen(
+                screenName = "Profile",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== DETALLE DE OFERTA ====================
+        composable(
+            route = Screen.OfferDetail.route,
+            arguments = listOf(
+                navArgument("offerId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val offerId = backStackEntry.arguments?.getString("offerId") ?: ""
+            // TODO: Implementar OfferDetailScreen
+            PlaceholderScreen(
+                screenName = "Offer Detail: $offerId",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ==================== PERFIL DE OTRO USUARIO ====================
+        composable(
+            route = Screen.UserProfile.route,
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            // TODO: Implementar UserProfileScreen
+            PlaceholderScreen(
+                screenName = "User Profile: $userId",
+                onNavigate = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
+}
+
+/**
+ * Pantalla temporal para probar la navegación
+ */
+@Composable
+private fun PlaceholderScreen(
+    screenName: String,
+    onNavigate: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = screenName,
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onNavigate) {
+            Text("Navigate")
+        }
+    }
+}

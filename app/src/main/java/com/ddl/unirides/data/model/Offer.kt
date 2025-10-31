@@ -3,7 +3,7 @@ package com.ddl.unirides.data.model
 import com.google.firebase.Timestamp
 
 data class Offer(
-    val id: String,
+    val id: String = "",
     val publisherUserId: String = "",
     val destination: String = "",
     val origin: String = "",
