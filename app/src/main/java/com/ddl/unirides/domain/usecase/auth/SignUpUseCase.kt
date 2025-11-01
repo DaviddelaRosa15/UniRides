@@ -25,7 +25,7 @@ class SignUpUseCase @Inject constructor(
             return Resource.Error("El email es requerido")
         }
 
-        if (!email.endsWith(".edu")) {
+        if (!email.contains(".edu")) {
             return Resource.Error("Solo se permiten correos universitarios (.edu)")
         }
 

@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     // Pantallas de autenticación
     object Login : Screen("login")
     object SignUp : Screen("signup")
+    object EmailVerification : Screen("email_verification")
 
     // Pantalla principal
     object Home : Screen("home")
@@ -30,4 +31,3 @@ sealed class Screen(val route: String) {
         fun createRoute(userId: String) = "user_profile/$userId"
     }
 }
-

@@ -19,6 +19,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ddl.unirides.ui.login.LoginScreen
+import com.ddl.unirides.ui.signup.SignUpScreen
+import com.ddl.unirides.ui.verification.EmailVerificationScreen
 
 /**
  * Grafo de navegación principal de la aplicación
@@ -50,16 +52,28 @@ fun NavGraph(
         }
 
         composable(Screen.SignUp.route) {
-            // TODO: Implementar SignUpScreen
-            PlaceholderScreen(
-                screenName = "SignUp",
-                onNavigate = {
+            SignUpScreen(
+                onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToVerification = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                    }
                 }
             )
         }
 
-        // ==================== HOME ====================
+        composable(Screen.EmailVerification.route) {
+            EmailVerificationScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.EmailVerification.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.Home.route) {
             // TODO: Implementar HomeScreen
             PlaceholderScreen(

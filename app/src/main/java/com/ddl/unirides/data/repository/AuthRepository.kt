@@ -84,11 +84,6 @@ class AuthRepository @Inject constructor(
      */
     suspend fun signUp(email: String, password: String, name: String): Resource<User> {
         return try {
-            // Verificar que el email termine en .edu
-            if (!email.endsWith(".edu")) {
-                return Resource.Error("Solo se permiten correos universitarios (.edu)")
-            }
-
             // Crear usuario en Firebase Auth
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val firebaseUser = result.user ?: return Resource.Error("Error al crear usuario")
@@ -172,7 +167,7 @@ class AuthRepository @Inject constructor(
     }
 
     /**
-     * Recargar información del usuario actual
+     * Recargar información del usuario actual desde Firebase
      */
     suspend fun reloadUser(): Resource<Unit> {
         return try {
@@ -184,7 +179,7 @@ class AuthRepository @Inject constructor(
     }
 
     /**
-     * Enviar email de verificación
+     * Enviar email de verificación al usuario actual
      */
     suspend fun sendEmailVerification(): Resource<Unit> {
         return try {
@@ -193,6 +188,28 @@ class AuthRepository @Inject constructor(
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Error al enviar email de verificación")
+        }
+    }
+
+    /**
+     * Verificar si el correo del usuario actual está verificado
+     */
+    suspend fun checkEmailVerified(): Resource<Boolean> {
+        return try {
+            val user = auth.currentUser ?: return Resource.Error("Usuario no autenticado")
+            user.reload().await()
+
+            // Actualizar en Firestore si cambió
+            if (user.isEmailVerified) {
+                firestore.collection("users")
+                    .document(user.uid)
+                    .update("verified", true)
+                    .await()
+            }
+
+            Resource.Success(user.isEmailVerified)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Error al verificar email")
         }
     }
 
@@ -327,4 +344,3 @@ class AuthRepository @Inject constructor(
         }
     }
 }
-
