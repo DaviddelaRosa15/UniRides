@@ -3,6 +3,7 @@ package com.ddl.unirides.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ddl.unirides.domain.Resource
+import com.ddl.unirides.domain.usecase.auth.SendEmailVerificationUseCase
 import com.ddl.unirides.domain.usecase.auth.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val signInUseCase: SignInUseCase
+    private val signInUseCase: SignInUseCase,
+    private val sendEmailVerificationUseCase: SendEmailVerificationUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -32,7 +34,7 @@ class LoginViewModel @Inject constructor(
         _state.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
     }
 
-    fun login(onSuccess: () -> Unit) {
+    fun login(onSuccess: () -> Unit, onNotVerified: () -> Unit) {
         val currentState = _state.value
 
         // Validaciones básicas de UI
@@ -46,8 +48,18 @@ class LoginViewModel @Inject constructor(
             // Usar el Use Case en lugar del repositorio directamente
             when (val result = signInUseCase(currentState.email, currentState.password)) {
                 is Resource.Success -> {
-                    _state.update { it.copy(isLoading = false) }
-                    onSuccess()
+                    val user = result.data
+
+                    // Verificar si el correo está verificado
+                    if (user != null && user.verified) {
+                        _state.update { it.copy(isLoading = false) }
+                        onSuccess()
+                    } else {
+                        // Usuario no verificado, enviar correo de verificación
+                        sendEmailVerificationUseCase()
+                        _state.update { it.copy(isLoading = false) }
+                        onNotVerified()
+                    }
                 }
 
                 is Resource.Error -> {

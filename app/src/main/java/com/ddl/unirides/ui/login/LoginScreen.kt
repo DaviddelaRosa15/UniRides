@@ -49,6 +49,7 @@ import com.ddl.unirides.ui.common.UniRidesTextField
 fun LoginScreen(
     onNavigateToSignUp: () -> Unit,
     onNavigateToHome: () -> Unit,
+    onNavigateToVerification: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -186,7 +187,10 @@ fun LoginScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        viewModel.login(onNavigateToHome)
+                        viewModel.login(
+                            onSuccess = onNavigateToHome,
+                            onNotVerified = onNavigateToVerification
+                        )
                     }
                 ),
                 isError = state.passwordError != null,
@@ -212,7 +216,12 @@ fun LoginScreen(
             // Botón de Login
             UniRidesPrimaryButton(
                 text = "Log In",
-                onClick = { viewModel.login(onNavigateToHome) },
+                onClick = {
+                    viewModel.login(
+                        onSuccess = onNavigateToHome,
+                        onNotVerified = onNavigateToVerification
+                    )
+                },
                 isLoading = state.isLoading,
                 enabled = !state.isLoading
             )

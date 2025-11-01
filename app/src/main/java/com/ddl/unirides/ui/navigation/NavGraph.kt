@@ -47,6 +47,11 @@ fun NavGraph(
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
+                },
+                onNavigateToVerification = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
                 }
             )
         }
@@ -75,46 +80,98 @@ fun NavGraph(
         }
 
         composable(Screen.Home.route) {
-            // TODO: Implementar HomeScreen
-            PlaceholderScreen(
-                screenName = "Home",
-                onNavigate = {
-                    navController.navigate(Screen.Search.route)
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                // TODO: Implementar HomeScreen
+                PlaceholderScreen(
+                    screenName = "Home",
+                    onNavigate = {
+                        navController.navigate(Screen.Search.route)
+                    }
+                )
+            }
         }
 
         // ==================== BÚSQUEDA DE VIAJES ====================
         composable(Screen.Search.route) {
-            // TODO: Implementar SearchScreen
-            PlaceholderScreen(
-                screenName = "Search",
-                onNavigate = {
-                    navController.popBackStack()
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                // TODO: Implementar SearchScreen
+                PlaceholderScreen(
+                    screenName = "Search",
+                    onNavigate = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         // ==================== OFRECER VIAJE ====================
         composable(Screen.Offer.route) {
-            // TODO: Implementar OfferScreen
-            PlaceholderScreen(
-                screenName = "Offer",
-                onNavigate = {
-                    navController.popBackStack()
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                // TODO: Implementar OfferScreen
+                PlaceholderScreen(
+                    screenName = "Offer",
+                    onNavigate = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         // ==================== LISTA DE CHATS ====================
         composable(Screen.ChatList.route) {
-            // TODO: Implementar ChatListScreen
-            PlaceholderScreen(
-                screenName = "Chat List",
-                onNavigate = {
-                    navController.popBackStack()
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                // TODO: Implementar ChatListScreen
+                PlaceholderScreen(
+                    screenName = "Chat List",
+                    onNavigate = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         // ==================== DETALLE DE CHAT ====================
