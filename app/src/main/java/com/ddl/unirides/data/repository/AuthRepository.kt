@@ -82,7 +82,12 @@ class AuthRepository @Inject constructor(
      * Registrar nuevo usuario con email y contraseña
      * Solo permite emails .edu
      */
-    suspend fun signUp(email: String, password: String, name: String): Resource<User> {
+    suspend fun signUp(
+        email: String,
+        password: String,
+        name: String,
+        profilePictureUrl: String? = null
+    ): Resource<User> {
         return try {
             // Crear usuario en Firebase Auth
             val result = auth.createUserWithEmailAndPassword(email, password).await()
@@ -97,7 +102,7 @@ class AuthRepository @Inject constructor(
                 name = name,
                 email = email,
                 verified = false,
-                profilePictureUrl = null
+                profilePictureUrl = profilePictureUrl
             )
 
             firestore.collection("users")

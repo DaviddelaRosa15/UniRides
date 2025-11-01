@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
@@ -43,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ddl.unirides.ui.common.ClickableText
+import com.ddl.unirides.ui.common.ProfileImagePicker
 import com.ddl.unirides.ui.common.UniRidesPrimaryButton
 import com.ddl.unirides.ui.common.UniRidesTextField
 import com.ddl.unirides.ui.theme.UniRidesTheme
@@ -89,16 +89,6 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Icono
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Sign Up Icon",
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
             // Título
             Text(
                 text = "Join UniRides",
@@ -119,7 +109,25 @@ fun SignUpScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Selector de imagen de perfil
+            ProfileImagePicker(
+                imageUri = state.profileImageUri,
+                onImageSelected = viewModel::onProfileImageSelected,
+                size = 100.dp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Add a profile picture (optional)",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Campo de Nombre
             Text(

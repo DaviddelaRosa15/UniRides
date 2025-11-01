@@ -1,9 +1,12 @@
 package com.ddl.unirides.ui.signup
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ddl.unirides.domain.Resource
 import com.ddl.unirides.domain.usecase.auth.SignUpUseCase
+import com.ddl.unirides.util.ImageCompressor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
+    application: Application,
     private val signUpUseCase: SignUpUseCase
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(SignUpState())
     val state: StateFlow<SignUpState> = _state.asStateFlow()
@@ -34,6 +38,14 @@ class SignUpViewModel @Inject constructor(
 
     fun onConfirmPasswordChange(confirmPassword: String) {
         _state.update { it.copy(confirmPassword = confirmPassword, confirmPasswordError = null) }
+    }
+
+    fun onProfileImageSelected(uri: Uri?) {
+        _state.update { it.copy(profileImageUri = uri) }
+    }
+
+    fun removeProfileImage() {
+        _state.update { it.copy(profileImageUri = null) }
     }
 
     fun togglePasswordVisibility() {
@@ -61,10 +73,25 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
+            // Comprimir la imagen si existe
+            val imageUri = currentState.profileImageUri?.let { uri ->
+                _state.update { it.copy(isUploadingImage = true) }
+                ImageCompressor.compressImage(
+                    context = getApplication(),
+                    imageUri = uri,
+                    maxWidth = 800,
+                    maxHeight = 800,
+                    quality = 85
+                ) ?: uri // Si falla la compresión, usar la original
+            }
+
+            _state.update { it.copy(isUploadingImage = false) }
+
             when (val result = signUpUseCase(
                 email = currentState.email,
                 password = currentState.password,
-                name = currentState.name
+                name = currentState.name,
+                profileImageUri = imageUri
             )) {
                 is Resource.Success -> {
                     _state.update { it.copy(isLoading = false) }
@@ -141,4 +168,3 @@ class SignUpViewModel @Inject constructor(
         _state.update { it.copy(error = null) }
     }
 }
-
