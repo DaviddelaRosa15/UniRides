@@ -208,7 +208,7 @@ private fun ProfileContent(
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(
-                                text = ".edu Verified",
+                                text = ".edu Verificado",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.primary

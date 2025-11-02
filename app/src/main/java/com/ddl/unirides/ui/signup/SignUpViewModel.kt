@@ -124,40 +124,40 @@ class SignUpViewModel @Inject constructor(
 
         // Validar nombre
         if (name.isBlank()) {
-            _state.update { it.copy(nameError = "Name is required") }
+            _state.update { it.copy(nameError = "El nombre es requerido") }
             isValid = false
         } else if (name.length < 2) {
-            _state.update { it.copy(nameError = "Name must be at least 2 characters") }
+            _state.update { it.copy(nameError = "El nombre debe tener al menos 2 caracteres") }
             isValid = false
         }
 
         // Validar email
         if (email.isBlank()) {
-            _state.update { it.copy(emailError = "Email is required") }
+            _state.update { it.copy(emailError = "El correo es requerido") }
             isValid = false
         } else if (!email.contains(".edu")) {
-            _state.update { it.copy(emailError = "Only .edu emails are allowed") }
+            _state.update { it.copy(emailError = "Solo se permiten correos universitarios (.edu)") }
             isValid = false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _state.update { it.copy(emailError = "Invalid email format") }
+            _state.update { it.copy(emailError = "Formato de correo inválido") }
             isValid = false
         }
 
         // Validar contraseña
         if (password.isBlank()) {
-            _state.update { it.copy(passwordError = "Password is required") }
+            _state.update { it.copy(passwordError = "La contraseña es requerida") }
             isValid = false
         } else if (password.length < 6) {
-            _state.update { it.copy(passwordError = "Password must be at least 6 characters") }
+            _state.update { it.copy(passwordError = "La contraseña debe tener al menos 6 caracteres") }
             isValid = false
         }
 
         // Validar confirmación de contraseña
         if (confirmPassword.isBlank()) {
-            _state.update { it.copy(confirmPasswordError = "Please confirm your password") }
+            _state.update { it.copy(confirmPasswordError = "Por favor confirma tu contraseña") }
             isValid = false
         } else if (password != confirmPassword) {
-            _state.update { it.copy(confirmPasswordError = "Passwords do not match") }
+            _state.update { it.copy(confirmPasswordError = "Las contraseñas no coinciden") }
             isValid = false
         }
 

@@ -14,7 +14,7 @@ class SignInUseCase @Inject constructor(
     suspend operator fun invoke(email: String, password: String): Resource<User> {
         // Validaciones de negocio
         if (email.isBlank()) {
-            return Resource.Error("El email es requerido")
+            return Resource.Error("El correo es requerido")
         }
 
         if (password.isBlank()) {
@@ -26,7 +26,7 @@ class SignInUseCase @Inject constructor(
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            return Resource.Error("Formato de email inválido")
+            return Resource.Error("Formato de correo inválido")
         }
 
         if (password.length < 6) {
@@ -37,4 +37,3 @@ class SignInUseCase @Inject constructor(
         return authRepository.signIn(email, password)
     }
 }
-

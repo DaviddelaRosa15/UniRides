@@ -30,7 +30,7 @@ class SignUpUseCase @Inject constructor(
         }
 
         if (email.isBlank()) {
-            return Resource.Error("El email es requerido")
+            return Resource.Error("El correo es requerido")
         }
 
         if (!email.contains(".edu")) {
@@ -38,7 +38,7 @@ class SignUpUseCase @Inject constructor(
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            return Resource.Error("Formato de email inválido")
+            return Resource.Error("Formato de correo inválido")
         }
 
         if (password.isBlank()) {

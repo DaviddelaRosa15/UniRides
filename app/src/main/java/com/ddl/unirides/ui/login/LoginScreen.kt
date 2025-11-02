@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.outlined.School
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -76,10 +77,10 @@ fun LoginScreen(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Icono de graduación (usando Email como placeholder)
+            // Ícono de graduación/toga
             Icon(
-                imageVector = Icons.Default.Email,
-                contentDescription = "University Icon",
+                imageVector = Icons.Outlined.School,
+                contentDescription = "Ícono Universitario",
                 modifier = Modifier.size(80.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -88,7 +89,7 @@ fun LoginScreen(
 
             // Título
             Text(
-                text = "Welcome Back, Scholar!",
+                text = "¡Bienvenido de nuevo!",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -100,7 +101,7 @@ fun LoginScreen(
 
             // Subtítulo
             Text(
-                text = "Log in to catch your next ride.",
+                text = "Inicia sesión para encontrar tu próximo viaje.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -110,7 +111,7 @@ fun LoginScreen(
 
             // Campo de Email
             Text(
-                text = "University Email",
+                text = "Correo Universitario",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
@@ -121,12 +122,12 @@ fun LoginScreen(
             UniRidesTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                label = "Email",
-                placeholder = "name@university.edu",
+                label = "Correo",
+                placeholder = "nombre@universidad.edu",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
-                        contentDescription = "Email Icon"
+                        contentDescription = "Ícono de Correo"
                     )
                 },
                 keyboardType = KeyboardType.Email,
@@ -139,7 +140,7 @@ fun LoginScreen(
             )
 
             Text(
-                text = "A valid .edu email is required.",
+                text = "Se requiere un correo .edu válido.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -151,7 +152,7 @@ fun LoginScreen(
 
             // Campo de Password
             Text(
-                text = "Password",
+                text = "Contraseña",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
@@ -162,12 +163,12 @@ fun LoginScreen(
             UniRidesTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
-                label = "Password",
-                placeholder = "Enter your password",
+                label = "Contraseña",
+                placeholder = "Ingresa tu contraseña",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = "Password Icon"
+                        contentDescription = "Ícono de Contraseña"
                     )
                 },
                 trailingIcon = {
@@ -205,7 +206,7 @@ fun LoginScreen(
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text(
-                    text = "Forgot Password?",
+                    text = "¿Olvidaste tu contraseña?",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -215,7 +216,7 @@ fun LoginScreen(
 
             // Botón de Login
             UniRidesPrimaryButton(
-                text = "Log In",
+                text = "Iniciar Sesión",
                 onClick = {
                     viewModel.login(
                         onSuccess = onNavigateToHome,
@@ -230,8 +231,8 @@ fun LoginScreen(
 
             // Link a Sign Up
             ClickableText(
-                normalText = "Don't have an account?",
-                clickableText = "Sign Up",
+                normalText = "¿No tienes una cuenta?",
+                clickableText = "Regístrate",
                 onClick = onNavigateToSignUp
             )
         }

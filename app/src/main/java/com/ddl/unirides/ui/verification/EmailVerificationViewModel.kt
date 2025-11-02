@@ -36,7 +36,7 @@ class EmailVerificationViewModel @Inject constructor(
                             it.copy(
                                 isCheckingVerification = false,
                                 isVerified = true,
-                                successMessage = "Email verified successfully!"
+                                successMessage = "¡Correo verificado exitosamente!"
                             )
                         }
                         onVerified()
@@ -44,7 +44,7 @@ class EmailVerificationViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 isCheckingVerification = false,
-                                error = "Email not verified yet. Please check your inbox."
+                                error = "El correo aún no ha sido verificado."
                             )
                         }
                     }
@@ -78,7 +78,7 @@ class EmailVerificationViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             isSendingEmail = false,
-                            successMessage = "Verification email sent! Check your inbox."
+                            successMessage = "¡Correo de verificación enviado!"
                         )
                     }
                 }
@@ -107,4 +107,3 @@ class EmailVerificationViewModel @Inject constructor(
         _state.update { it.copy(successMessage = null) }
     }
 }
-

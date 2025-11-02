@@ -70,7 +70,7 @@ fun EmailVerificationScreen(
             // Icono de email
             Icon(
                 imageVector = Icons.Default.Email,
-                contentDescription = "Email Icon",
+                contentDescription = "Ícono de Correo",
                 modifier = Modifier.size(100.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -79,7 +79,7 @@ fun EmailVerificationScreen(
 
             // Título
             Text(
-                text = "Verify Your Email",
+                text = "Verifica tu Correo",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -102,7 +102,7 @@ fun EmailVerificationScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "We've sent a verification email to your university email address.",
+                        text = "Hemos enviado un correo de verificación a tu dirección de correo universitario.",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -111,7 +111,7 @@ fun EmailVerificationScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Please check your inbox and click the verification link to activate your account.",
+                        text = "Por favor revisa tu bandeja de entrada y haz clic en el enlace de verificación para activar tu cuenta.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                         textAlign = TextAlign.Center
@@ -123,7 +123,7 @@ fun EmailVerificationScreen(
 
             // Botón para verificar
             UniRidesPrimaryButton(
-                text = if (state.isCheckingVerification) "Checking..." else "I've Verified My Email",
+                text = if (state.isCheckingVerification) "Verificando..." else "Ya Verifiqué mi Correo",
                 onClick = { viewModel.checkVerification(onNavigateToHome) },
                 isLoading = state.isCheckingVerification,
                 modifier = Modifier.fillMaxWidth()
@@ -138,7 +138,7 @@ fun EmailVerificationScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = if (state.isSendingEmail) "Sending..." else "Resend Verification Email",
+                    text = if (state.isSendingEmail) "Enviando..." else "Reenviar Correo de Verificación",
                     style = MaterialTheme.typography.labelLarge
                 )
             }
@@ -147,7 +147,7 @@ fun EmailVerificationScreen(
 
             // Información adicional
             Text(
-                text = "Didn't receive the email? Check your spam folder or click resend.",
+                text = "¿No recibiste el correo? Revisa tu carpeta de spam o haz clic en reenviar.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center
@@ -173,4 +173,3 @@ fun EmailVerificationScreenPreview() {
         )
     }
 }
-

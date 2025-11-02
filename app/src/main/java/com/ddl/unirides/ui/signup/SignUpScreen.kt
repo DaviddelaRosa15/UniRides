@@ -82,7 +82,7 @@ fun SignUpScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = "Volver",
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -91,7 +91,7 @@ fun SignUpScreen(
 
             // Título
             Text(
-                text = "Join UniRides",
+                text = "Únete a UniRides",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -103,7 +103,7 @@ fun SignUpScreen(
 
             // Subtítulo
             Text(
-                text = "Create your account to start sharing rides.",
+                text = "Crea tu cuenta para empezar a compartir viajes.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -121,7 +121,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Add a profile picture (optional)",
+                text = "Agrega una foto de perfil (opcional)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -131,7 +131,7 @@ fun SignUpScreen(
 
             // Campo de Nombre
             Text(
-                text = "Full Name",
+                text = "Nombre Completo",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
@@ -142,12 +142,12 @@ fun SignUpScreen(
             UniRidesTextField(
                 value = state.name,
                 onValueChange = viewModel::onNameChange,
-                label = "Name",
-                placeholder = "John Doe",
+                label = "Nombre",
+                placeholder = "Juan Pérez",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = "Name Icon"
+                        contentDescription = "Ícono de Nombre"
                     )
                 },
                 keyboardType = KeyboardType.Text,
@@ -163,7 +163,7 @@ fun SignUpScreen(
 
             // Campo de Email
             Text(
-                text = "University Email",
+                text = "Correo Universitario",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
@@ -174,12 +174,12 @@ fun SignUpScreen(
             UniRidesTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                label = "Email",
-                placeholder = "name@university.edu",
+                label = "Correo",
+                placeholder = "nombre@universidad.edu",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
-                        contentDescription = "Email Icon"
+                        contentDescription = "Ícono de Correo"
                     )
                 },
                 keyboardType = KeyboardType.Email,
@@ -192,7 +192,7 @@ fun SignUpScreen(
             )
 
             Text(
-                text = "A valid .edu email is required.",
+                text = "Se requiere un correo .edu válido.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -204,7 +204,7 @@ fun SignUpScreen(
 
             // Campo de Contraseña
             Text(
-                text = "Password",
+                text = "Contraseña",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
@@ -215,12 +215,12 @@ fun SignUpScreen(
             UniRidesTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
-                label = "Password",
-                placeholder = "Enter your password",
+                label = "Contraseña",
+                placeholder = "Ingresa tu contraseña",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = "Password Icon"
+                        contentDescription = "Ícono de Contraseña"
                     )
                 },
                 trailingIcon = {
@@ -245,7 +245,7 @@ fun SignUpScreen(
             )
 
             Text(
-                text = "Must be at least 6 characters.",
+                text = "Debe tener al menos 6 caracteres.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -257,7 +257,7 @@ fun SignUpScreen(
 
             // Campo de Confirmar Contraseña
             Text(
-                text = "Confirm Password",
+                text = "Confirmar Contraseña",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
@@ -268,12 +268,12 @@ fun SignUpScreen(
             UniRidesTextField(
                 value = state.confirmPassword,
                 onValueChange = viewModel::onConfirmPasswordChange,
-                label = "Confirm Password",
-                placeholder = "Re-enter your password",
+                label = "Confirmar Contraseña",
+                placeholder = "Vuelve a ingresar tu contraseña",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = "Password Icon"
+                        contentDescription = "Ícono de Contraseña"
                     )
                 },
                 trailingIcon = {
@@ -304,7 +304,7 @@ fun SignUpScreen(
 
             // Botón de Sign Up
             UniRidesPrimaryButton(
-                text = "Create Account",
+                text = "Crear Cuenta",
                 onClick = { viewModel.signUp(onNavigateToVerification) },
                 isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()
@@ -314,8 +314,8 @@ fun SignUpScreen(
 
             // Ya tienes cuenta
             ClickableText(
-                normalText = "Already have an account?",
-                clickableText = "Log In",
+                normalText = "¿Ya tienes una cuenta?",
+                clickableText = "Inicia Sesión",
                 onClick = onNavigateBack
             )
         }
