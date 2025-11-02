@@ -25,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -67,7 +68,7 @@ fun ProfileScreen(
                             text = "Mi Perfil",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     navigationIcon = {
@@ -76,7 +77,7 @@ fun ProfileScreen(
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "Volver",
-                                    tint = Color.White
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -86,16 +87,16 @@ fun ProfileScreen(
                             Icon(
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = "Configuración",
-                                tint = Color.White
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color(0xFF1A2F26)
+                        containerColor = MaterialTheme.colorScheme.background
                     )
                 )
             },
-            containerColor = Color(0xFF1A2F26)
+            containerColor = MaterialTheme.colorScheme.background
         ) { paddingValues ->
             ProfileContent(
                 uiState = uiState,
@@ -138,14 +139,14 @@ private fun ProfileContent(
             uiState.isLoading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = Color(0xFF00BFA5)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
             uiState.error != null -> {
                 Text(
                     text = uiState.error ?: "Error desconocido",
-                    color = Color.Red,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(16.dp)
@@ -176,7 +177,7 @@ private fun ProfileContent(
                         text = user.name,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -185,7 +186,7 @@ private fun ProfileContent(
                     Text(
                         text = viewModel.getUniversity(user.email),
                         fontSize = 16.sp,
-                        color = Color(0xFFB0BEC5)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -195,7 +196,7 @@ private fun ProfileContent(
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(Color(0xFF2D4A3E))
+                                .background(MaterialTheme.colorScheme.primaryContainer)
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -203,14 +204,14 @@ private fun ProfileContent(
                             Icon(
                                 imageVector = Icons.Default.Verified,
                                 contentDescription = "Verificado",
-                                tint = Color(0xFF00BFA5),
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(
                                 text = ".edu Verified",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF00BFA5)
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                         Spacer(modifier = Modifier.height(24.dp))
@@ -234,15 +235,15 @@ private fun ProfileContent(
                             icon = Icons.Default.DirectionsCar,
                             text = "Mis viajes",
                             onClick = onNavigateToMyTrips,
-                            iconTint = Color(0xFF00BFA5)
+                            iconTint = MaterialTheme.colorScheme.primary
                         )
 
                         ProfileActionItem(
                             icon = Icons.AutoMirrored.Filled.Logout,
                             text = "Cerrar Sesión",
                             onClick = onSignOut,
-                            iconTint = Color(0xFFEF5350),
-                            textColor = Color(0xFFEF5350),
+                            iconTint = MaterialTheme.colorScheme.error,
+                            textColor = MaterialTheme.colorScheme.error,
                             showArrow = false
                         )
                     }
@@ -262,7 +263,7 @@ private fun RatingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF2D4A3E))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -275,13 +276,13 @@ private fun RatingsSection(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF1A2F26)),
+                    .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
-                    tint = Color(0xFF00BFA5),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -289,7 +290,7 @@ private fun RatingsSection(
                 text = "Puntuaciones",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -307,7 +308,7 @@ private fun RatingsSection(
             Text(
                 text = "Aún no tienes calificaciones",
                 fontSize = 14.sp,
-                color = Color(0xFFB0BEC5),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }

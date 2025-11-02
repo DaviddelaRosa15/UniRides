@@ -1,104 +1,57 @@
 package com.ddl.unirides.ui.theme
 
 import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryBlueLight,
-    onPrimary = TextPrimary,
-    primaryContainer = PrimaryBlueDark,
-    onPrimaryContainer = TextPrimaryDark,
+// Esquema de colores principal (dark theme - verde oscuro)
+private val UniRidesColorScheme = darkColorScheme(
+    primary = AccentCyan,                    // Turquesa para botones y acciones
+    onPrimary = TextOnAccent,                // Texto oscuro sobre turquesa
+    primaryContainer = PrimaryGreenLight,    // Containers
+    onPrimaryContainer = TextPrimary,        // Texto blanco sobre containers
 
-    secondary = SecondaryGreenLight,
-    onSecondary = TextPrimary,
-    secondaryContainer = SecondaryGreenDark,
-    onSecondaryContainer = TextPrimaryDark,
+    secondary = AccentCyanLight,
+    onSecondary = TextOnAccent,
+    secondaryContainer = SurfaceDark,
+    onSecondaryContainer = TextPrimary,
 
-    tertiary = AccentOrangeLight,
+    tertiary = AccentCyanDark,
     onTertiary = TextPrimary,
-    tertiaryContainer = AccentOrangeDark,
-    onTertiaryContainer = TextPrimaryDark,
 
     error = ErrorRed,
-    onError = TextPrimaryDark,
+    onError = TextPrimary,
 
-    background = BackgroundDark,
-    onBackground = TextPrimaryDark,
+    background = BackgroundDark,             // Verde oscuro #1A2F26
+    onBackground = TextPrimary,              // Texto blanco
 
-    surface = SurfaceDark,
-    onSurface = TextPrimaryDark,
-    surfaceVariant = Color(0xFF2C2C2C),
-    onSurfaceVariant = TextSecondaryDark,
+    surface = SurfaceDark,                   // Verde medio #2D4A3E
+    onSurface = TextPrimary,                 // Texto blanco
+    surfaceVariant = SurfaceVariant,         // #3D5A4D
+    onSurfaceVariant = TextSecondary,        // Gris claro
 
-    outline = DividerDark,
-    outlineVariant = Color(0xFF4A4A4A)
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = PrimaryBlue,
-    onPrimary = Color.White,
-    primaryContainer = PrimaryBlueLight,
-    onPrimaryContainer = PrimaryBlueDark,
-
-    secondary = SecondaryGreen,
-    onSecondary = Color.White,
-    secondaryContainer = SecondaryGreenLight,
-    onSecondaryContainer = SecondaryGreenDark,
-
-    tertiary = AccentOrange,
-    onTertiary = Color.White,
-    tertiaryContainer = AccentOrangeLight,
-    onTertiaryContainer = AccentOrangeDark,
-
-    error = ErrorRed,
-    onError = Color.White,
-
-    background = BackgroundLight,
-    onBackground = TextPrimary,
-
-    surface = SurfaceLight,
-    onSurface = TextPrimary,
-    surfaceVariant = Color(0xFFF0F0F0),
-    onSurfaceVariant = TextSecondary,
-
-    outline = DividerLight,
-    outlineVariant = Color(0xFFCACACA)
+    outline = OutlineColor,
+    outlineVariant = DividerColor
 )
 
 @Composable
 fun UniRidesTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color está deshabilitado para usar nuestra paleta personalizada
-    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalView.current.context
-            if (darkTheme) androidx.compose.material3.dynamicDarkColorScheme(context)
-            else androidx.compose.material3.dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = UniRidesColorScheme
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            @Suppress("DEPRECATION")
+            window.statusBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 

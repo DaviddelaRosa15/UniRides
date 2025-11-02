@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,7 +35,7 @@ fun RatingBar(
             text = score.toString(),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.width(20.dp)
         )
 
@@ -45,14 +45,14 @@ fun RatingBar(
                 .weight(1f)
                 .height(12.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .background(Color(0xFF3D5A4D))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(percentage / 100f)
                     .clip(RoundedCornerShape(6.dp))
-                    .background(Color(0xFF00BFA5))
+                    .background(MaterialTheme.colorScheme.primary)
             )
         }
 
@@ -60,9 +60,8 @@ fun RatingBar(
         Text(
             text = "${percentage.toInt()}%",
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.width(40.dp)
         )
     }
 }
-
