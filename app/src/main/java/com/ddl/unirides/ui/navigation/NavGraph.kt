@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ddl.unirides.ui.login.LoginScreen
+import com.ddl.unirides.ui.profile.ProfileScreen
 import com.ddl.unirides.ui.signup.SignUpScreen
 import com.ddl.unirides.ui.verification.EmailVerificationScreen
 
@@ -92,11 +93,11 @@ fun NavGraph(
                     }
                 }
             ) {
-                // TODO: Implementar HomeScreen
-                PlaceholderScreen(
-                    screenName = "Home",
-                    onNavigate = {
-                        navController.navigate(Screen.Search.route)
+                MainScreen(
+                    onLogout = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
                     }
                 )
             }
@@ -195,13 +196,35 @@ fun NavGraph(
 
         // ==================== PERFIL DE USUARIO ====================
         composable(Screen.Profile.route) {
-            // TODO: Implementar ProfileScreen
-            PlaceholderScreen(
-                screenName = "Profile",
-                onNavigate = {
-                    navController.popBackStack()
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                ProfileScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onNavigateToSettings = {
+                        // TODO: Implementar pantalla de configuración
+                    },
+                    onNavigateToMyTrips = {
+                        // TODO: Navegar a mis viajes cuando esté implementado
+                    },
+                    onSignOut = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
 
         // ==================== DETALLE DE OFERTA ====================
