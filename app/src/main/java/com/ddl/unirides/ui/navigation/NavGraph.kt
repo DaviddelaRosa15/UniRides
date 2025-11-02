@@ -76,6 +76,11 @@ fun NavGraph(
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.EmailVerification.route) { inclusive = true }
                     }
+                },
+                onNavigateToLogin = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.EmailVerification.route) { inclusive = true }
+                    }
                 }
             )
         }
