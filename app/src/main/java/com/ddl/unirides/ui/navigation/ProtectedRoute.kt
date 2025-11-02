@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ddl.unirides.domain.Resource
 
@@ -18,6 +19,7 @@ fun ProtectedRoute(
     content: @Composable () -> Unit
 ) {
     val userState by viewModel.userState.collectAsState()
+    val saveableStateHolder = rememberSaveableStateHolder()
 
     LaunchedEffect(Unit) {
         viewModel.checkAuthentication()
@@ -27,32 +29,25 @@ fun ProtectedRoute(
         is Resource.Success -> {
             val user = (userState as Resource.Success).data
             if (user == null) {
-                // Usuario no autenticado
-                LaunchedEffect(Unit) {
-                    onNotAuthenticated()
-                }
+                LaunchedEffect(Unit) { onNotAuthenticated() }
             } else if (!user.verified) {
-                // Usuario no verificado
-                LaunchedEffect(Unit) {
-                    onNotVerified()
-                }
+                LaunchedEffect(Unit) { onNotVerified() }
             } else {
-                // Usuario autenticado y verificado, mostrar contenido
-                content()
+                saveableStateHolder.SaveableStateProvider(key = "protected_content") {
+                    content()
+                }
             }
         }
 
         is Resource.Loading -> {
-            // Mostrar loading mientras verifica
-            // Puedes poner un composable de loading aquí si quieres
+            // Mantener el contenido montado para no perder estado durante recargas breves
+            saveableStateHolder.SaveableStateProvider(key = "protected_content") {
+                content()
+            }
         }
 
         is Resource.Error -> {
-            // Error al verificar, redirigir a login
-            LaunchedEffect(Unit) {
-                onNotAuthenticated()
-            }
+            LaunchedEffect(Unit) { onNotAuthenticated() }
         }
     }
 }
-

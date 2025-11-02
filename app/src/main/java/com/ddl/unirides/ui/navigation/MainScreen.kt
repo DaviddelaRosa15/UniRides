@@ -10,12 +10,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,11 +28,30 @@ import com.ddl.unirides.ui.profile.ProfileScreen
 
 @Composable
 fun MainScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    viewModel: MainNavViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
+
+    // Observe selected tab from ViewModel (persists with SavedStateHandle)
+    val selectedRoute by viewModel.selectedRoute.collectAsState()
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentRoute = navBackStackEntry?.destination?.route ?: selectedRoute
+
+    // Ensure initial navigation matches the restored selectedRoute
+    LaunchedEffect(selectedRoute) {
+        val current = navController.currentBackStackEntry?.destination?.route
+        if (current == null || current != selectedRoute) {
+            navController.navigate(selectedRoute) {
+                popUpTo(navController.graph.startDestinationId) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -37,15 +59,15 @@ fun MainScreen(
             BottomNavigationBar(
                 currentRoute = currentRoute,
                 onNavigate = { route ->
-                    navController.navigate(route) {
-                        // Pop up to the start destination to avoid building up a large stack
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                    if (route != currentRoute) {
+                        viewModel.selectRoute(route)
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        // Avoid multiple copies of the same destination
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
                     }
                 }
             )
@@ -53,7 +75,7 @@ fun MainScreen(
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = selectedRoute,
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Home.route) {
@@ -81,8 +103,13 @@ fun MainScreen(
                         // TODO: Implementar navegación a configuración
                     },
                     onNavigateToMyTrips = {
+                        viewModel.selectRoute(Screen.Search.route)
                         navController.navigate(Screen.Search.route) {
-                            popUpTo(Screen.Home.route)
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     },
                     onSignOut = onLogout,
