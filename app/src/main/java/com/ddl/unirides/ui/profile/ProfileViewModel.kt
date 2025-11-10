@@ -3,8 +3,8 @@ package com.ddl.unirides.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ddl.unirides.data.model.Rating
-import com.ddl.unirides.data.repository.UserRepository
 import com.ddl.unirides.domain.usecase.auth.SignOutUseCase
+import com.ddl.unirides.domain.usecase.user.GetCurrentUserIdUseCase
 import com.ddl.unirides.domain.usecase.user.GetUserProfileUseCase
 import com.ddl.unirides.domain.usecase.user.GetUserRatingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getUserRatingsUseCase: GetUserRatingsUseCase,
-    private val signOutUseCase: SignOutUseCase,
-    private val userRepository: UserRepository
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileState())
@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun loadUserProfile() {
-        val userId = userRepository.getCurrentUserId()
+        val userId = getCurrentUserIdUseCase()
         if (userId == null) {
             _uiState.value = _uiState.value.copy(
                 isLoading = false,

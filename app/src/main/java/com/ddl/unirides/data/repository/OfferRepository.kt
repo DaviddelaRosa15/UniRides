@@ -74,10 +74,16 @@ class OfferRepository @Inject constructor(
      */
     suspend fun createOffer(offer: Offer): Result<String> {
         return try {
+            // Crear el documento y obtener la referencia
             val docRef = firestore.collection("offers")
                 .add(offer)
                 .await()
-            Result.success(docRef.id)
+
+            // Actualizar el documento con su propio ID
+            val offerId = docRef.id
+            docRef.update("id", offerId).await()
+
+            Result.success(offerId)
         } catch (e: Exception) {
             Result.failure(e)
         }

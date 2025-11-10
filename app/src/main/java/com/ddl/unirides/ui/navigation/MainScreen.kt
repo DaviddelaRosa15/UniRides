@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ddl.unirides.ui.common.BottomNavigationBar
 import com.ddl.unirides.ui.mytrips.MyTripsScreen
+import com.ddl.unirides.ui.offer.OfferRideScreen
 import com.ddl.unirides.ui.profile.ProfileScreen
 
 @Composable
@@ -38,40 +38,32 @@ fun MainScreen(
     val selectedRoute by viewModel.selectedRoute.collectAsState()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: selectedRoute
+    val currentRoute = navBackStackEntry?.destination?.route
 
-    // Ensure initial navigation matches the restored selectedRoute
-    LaunchedEffect(selectedRoute) {
-        val current = navController.currentBackStackEntry?.destination?.route
-        if (current == null || current != selectedRoute) {
-            navController.navigate(selectedRoute) {
-                popUpTo(navController.graph.startDestinationId) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
-    }
+
+    // Determinar si debemos mostrar el bottom bar
+    val shouldShowBottomBar = currentRoute != Screen.Offer.route
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            BottomNavigationBar(
-                currentRoute = currentRoute,
-                onNavigate = { route ->
-                    if (route != currentRoute) {
-                        viewModel.selectRoute(route)
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+            if (shouldShowBottomBar) {
+                BottomNavigationBar(
+                    currentRoute = currentRoute ?: selectedRoute,
+                    onNavigate = { route ->
+                        if (route != currentRoute) {
+                            viewModel.selectRoute(route)
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     }
-                }
-            )
+                )
+            }
         }
     ) { paddingValues ->
         NavHost(
@@ -89,7 +81,7 @@ fun MainScreen(
                         // TODO: Navegar a detalle de oferta
                     },
                     onPublishClick = {
-                        // TODO: Navegar a formulario de crear oferta
+                        navController.navigate(Screen.Offer.route)
                     }
                 )
             }
@@ -98,6 +90,14 @@ fun MainScreen(
                 // TODO: Implementar pantalla de lista de chats
                 PlaceholderScreenContent(
                     screenName = "Chats"
+                )
+            }
+
+            composable(Screen.Offer.route) {
+                OfferRideScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
 
@@ -168,3 +168,4 @@ private fun PlaceholderScreenContent(screenName: String) {
         }
     }
 }
+

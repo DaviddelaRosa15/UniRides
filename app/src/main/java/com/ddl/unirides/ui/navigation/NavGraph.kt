@@ -132,29 +132,6 @@ fun NavGraph(
             }
         }
 
-        // ==================== OFRECER VIAJE ====================
-        composable(Screen.Offer.route) {
-            ProtectedRoute(
-                onNotAuthenticated = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                },
-                onNotVerified = {
-                    navController.navigate(Screen.EmailVerification.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
-            ) {
-                // TODO: Implementar OfferScreen
-                PlaceholderScreen(
-                    screenName = "Offer",
-                    onNavigate = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-        }
 
         // ==================== LISTA DE CHATS ====================
         composable(Screen.ChatList.route) {
