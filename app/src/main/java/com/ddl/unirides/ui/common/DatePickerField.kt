@@ -23,8 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,9 +75,21 @@ fun DatePickerField(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val date = Date(millis)
+                            // Leer fecha en UTC para evitar problemas de zona horaria
+                            val utcCalendar =
+                                Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                                    timeInMillis = millis
+                                }
+
+                            // Crear fecha en zona horaria local
+                            val localCalendar = Calendar.getInstance().apply {
+                                set(Calendar.YEAR, utcCalendar.get(Calendar.YEAR))
+                                set(Calendar.MONTH, utcCalendar.get(Calendar.MONTH))
+                                set(Calendar.DAY_OF_MONTH, utcCalendar.get(Calendar.DAY_OF_MONTH))
+                            }
+
                             val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                            onValueChange(formatter.format(date))
+                            onValueChange(formatter.format(localCalendar.time))
                         }
                         showDialog = false
                     }

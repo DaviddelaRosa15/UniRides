@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ddl.unirides.ui.common.BottomNavigationBar
+import com.ddl.unirides.ui.home.HomeScreen
 import com.ddl.unirides.ui.mytrips.MyTripsScreen
 import com.ddl.unirides.ui.offer.OfferRideScreen
 import com.ddl.unirides.ui.profile.ProfileScreen
@@ -72,7 +73,27 @@ fun MainScreen(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Home.route) {
-                HomeScreenContent()
+                HomeScreen(
+                    onMenuClick = {
+                        // TODO: Implementar menú lateral
+                    },
+                    onChatListClick = {
+                        viewModel.selectRoute(Screen.ChatList.route)
+                        navController.navigate(Screen.ChatList.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onOfferClick = { offerId ->
+                        // TODO: Navegar a detalle de oferta
+                    },
+                    onChatWithUserClick = { offerId, userId ->
+                        // TODO: Navegar a chat con usuario específico
+                    }
+                )
             }
 
             composable(Screen.Search.route) {
@@ -125,22 +146,6 @@ fun MainScreen(
     }
 }
 
-@Composable
-private fun HomeScreenContent() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Inicio",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
 
 @Composable
 private fun PlaceholderScreenContent(screenName: String) {

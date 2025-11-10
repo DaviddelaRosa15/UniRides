@@ -1,7 +1,6 @@
 package com.ddl.unirides.data.repository
 
 import com.ddl.unirides.data.model.Offer
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,8 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 class OfferRepository @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val firestore: FirebaseFirestore
 ) {
 
     /**
@@ -117,6 +115,35 @@ class OfferRepository @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    /**
+     * Obtiene todas las ofertas disponibles (para la pantalla de inicio)
+     * Excluye las ofertas del usuario actual
+     *
+     * @param currentUserId ID del usuario actualmente logueado
+     */
+    fun getAllOffersFlow(currentUserId: String): Flow<Result<List<Offer>>> = callbackFlow {
+        val listener = firestore.collection("offers")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(Result.failure(error))
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val offers = snapshot.documents.mapNotNull { doc ->
+                        doc.toObject(Offer::class.java)?.copy(id = doc.id)
+                    }
+                    // Filtrar ofertas: excluir las del usuario actual
+                    val filteredOffers = offers.filter { it.publisherUserId != currentUserId }
+                    trySend(Result.success(filteredOffers))
+                } else {
+                    trySend(Result.failure(Exception("Error al obtener ofertas")))
+                }
+            }
+
+        awaitClose { listener.remove() }
     }
 }
 
