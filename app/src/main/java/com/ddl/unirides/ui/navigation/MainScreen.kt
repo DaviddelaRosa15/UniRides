@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ddl.unirides.ui.common.BottomNavigationBar
+import com.ddl.unirides.ui.mytrips.MyTripsScreen
 import com.ddl.unirides.ui.profile.ProfileScreen
 
 @Composable
@@ -83,9 +84,13 @@ fun MainScreen(
             }
 
             composable(Screen.Search.route) {
-                // TODO: Implementar pantalla de búsqueda/mis viajes
-                PlaceholderScreenContent(
-                    screenName = "Mis Viajes"
+                MyTripsScreen(
+                    onOfferClick = { offerId ->
+                        // TODO: Navegar a detalle de oferta
+                    },
+                    onPublishClick = {
+                        // TODO: Navegar a formulario de crear oferta
+                    }
                 )
             }
 
