@@ -74,8 +74,18 @@ fun MainScreen(
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onMenuClick = {
-                        // TODO: Implementar menú lateral
+                    onRateDriverClick = {
+                        // TODO: Navegar a pantalla de calificar conductor
+                    },
+                    onMyTripsClick = {
+                        viewModel.selectRoute(Screen.Search.route)
+                        navController.navigate(Screen.Search.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     },
                     onChatListClick = {
                         viewModel.selectRoute(Screen.ChatList.route)

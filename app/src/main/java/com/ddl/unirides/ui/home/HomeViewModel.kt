@@ -3,6 +3,7 @@ package com.ddl.unirides.ui.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ddl.unirides.data.repository.UserRepository
 import com.ddl.unirides.domain.usecase.GetAllAvailableOffersUseCase
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAllAvailableOffersUseCase: GetAllAvailableOffersUseCase,
+    private val userRepository: UserRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -24,6 +26,20 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadOffers()
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            val userId = userRepository.getCurrentUserId()
+            if (userId != null) {
+                userRepository.getUserProfileFlow(userId).collect { result ->
+                    result.onSuccess { user ->
+                        _uiState.update { it.copy(currentUser = user) }
+                    }
+                }
+            }
+        }
     }
 
     private fun loadOffers() {

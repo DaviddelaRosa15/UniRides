@@ -5,6 +5,7 @@ import com.ddl.unirides.data.model.User
 import com.google.firebase.Timestamp
 
 data class HomeUiState(
+    val currentUser: User? = null,
     val searchQuery: String = "",
     val fromDate: Timestamp? = null,
     val toDate: Timestamp? = null,
