@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Background (blue circular gradient suggestion) -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M54,0a54,54 0 1,0 0,108a54,54 0 1,0 0,-108" />
+
+    <!-- "U" shaped car body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,68a19,19 0 0,1 38,0v6a10,10 0 0,1 -10,10h-18a10,10 0 0,1 -10,-10z"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF" />
+
+    <!-- Wheels -->
+    <path
+        android:fillColor="#263238"
+        android:pathData="M40,84a6,6 0 1,0 12,0a6,6 0 1,0 -12,0z
+                          M56,84a6,6 0 1,0 12,0a6,6 0 1,0 -12,0z" />
+
+    <!-- Location pin (over the car roof) -->
+    <path
+        android:fillColor="#FF5252"
+        android:pathData="M54,32c-7,0-12,5-12,12c0,7 12,19 12,19c0,0 12,-12 12,-19c0,-7 -5,-12 -12,-12z" />
+
+    <!-- Pin center (head/person or just detail) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,41a4,4 0 1,0 8,0a4,4 0 1,0 -8,0z" />
+
+    <!-- Graduation cap on the pin (optional, accent for university) -->
+    <path
+        android:fillColor="#263238"
+        android:pathData="M50,29l8,-3l8,3l-8,3z
+                          M56,32v3"
+        android:strokeWidth="1"
+        android:strokeColor="#263238" />
+</vector>
+
