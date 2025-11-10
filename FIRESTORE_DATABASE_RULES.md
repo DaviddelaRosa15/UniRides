@@ -31,19 +31,31 @@ service cloud.firestore {
       
       // Permitir eliminar solo tu propio perfil
       allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // ==================== CALIFICACIONES ====================
+    // Regla para la colección de calificaciones (ratings)
+    match /ratings/{ratingId} {
+      // Cualquier usuario autenticado puede leer calificaciones
+      allow read: if request.auth != null;
       
-      // Subcolección de calificaciones (ratings)
-      match /ratings/{ratingId} {
-        // Cualquier usuario autenticado puede leer las calificaciones de un usuario
-        allow read: if request.auth != null;
-        
-        // Solo usuarios autenticados pueden crear calificaciones
-        allow create: if request.auth != null;
-        
-        // Solo el creador de la calificación puede actualizarla/eliminarla
-        allow update, delete: if request.auth != null && 
-          resource.data.raterUserId == request.auth.uid;
-      }
+      // Solo usuarios autenticados pueden crear calificaciones
+      // Validaciones: el usuario autenticado debe ser quien califica y no puede calificarse a sí mismo
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.raterUserId
+                    && request.resource.data.raterUserId != request.resource.data.ratedUserId
+                    && request.resource.data.score >= 1 
+                    && request.resource.data.score <= 5;
+      
+      // Solo el creador puede actualizar su calificación
+      allow update: if request.auth != null
+                    && request.auth.uid == resource.data.raterUserId
+                    && request.resource.data.score >= 1 
+                    && request.resource.data.score <= 5;
+      
+      // Solo el creador puede eliminar su calificación
+      allow delete: if request.auth != null
+                    && request.auth.uid == resource.data.raterUserId;
     }
     
     // ==================== OFERTAS DE VIAJE ====================
@@ -101,14 +113,6 @@ match /users/{userId} {
   allow create: if request.auth != null && request.auth.uid == userId;
   allow update: if request.auth != null && request.auth.uid == userId;
   allow delete: if request.auth != null && request.auth.uid == userId;
-  
-  // Subcolección de calificaciones
-  match /ratings/{ratingId} {
-    allow read: if request.auth != null;
-    allow create: if request.auth != null;
-    allow update, delete: if request.auth != null && 
-      resource.data.raterUserId == request.auth.uid;
-  }
 }
 ```
 
@@ -126,28 +130,70 @@ match /users/{userId} {
 - `profilePictureUrl`: String? (opcional)
 - `verified`: Boolean
 
-**Subcolección ratings/ (calificaciones recibidas):**
+---
 
-- ✅ **Lectura**: Cualquier usuario autenticado puede ver las calificaciones de un usuario
-- ✅ **Creación**: Cualquier usuario autenticado puede calificar a otro usuario
-- ✅ **Actualización/Eliminación**: Solo quien creó la calificación puede modificarla
+### 2️⃣ **Colección: ratings**
+
+```javascript
+match /ratings/{ratingId} {
+  allow read: if request.auth != null;
+  
+  allow create: if request.auth != null
+                && request.auth.uid == request.resource.data.raterUserId
+                && request.resource.data.raterUserId != request.resource.data.ratedUserId
+                && request.resource.data.score >= 1 
+                && request.resource.data.score <= 5;
+  
+  allow update: if request.auth != null
+                && request.auth.uid == resource.data.raterUserId
+                && request.resource.data.score >= 1 
+                && request.resource.data.score <= 5;
+  
+  allow delete: if request.auth != null
+                && request.auth.uid == resource.data.raterUserId;
+}
+```
+
+**Permisos de calificaciones:**
+
+- ✅ **Lectura**: Cualquier usuario autenticado puede ver todas las calificaciones
+- ✅ **Creación**: Solo puedes crear calificaciones a tu nombre, no puedes calificarte a ti mismo, y
+  el score debe ser 1-5
+- ✅ **Actualización**: Solo puedes modificar tus propias calificaciones
+- ✅ **Eliminación**: Solo puedes eliminar tus propias calificaciones
 
 **Campos de rating:**
 
+- `id`: String
 - `raterUserId`: String (ID del usuario que califica)
-- `score`: Int (puntuación)
+- `ratedUserId`: String (ID del usuario que es calificado)
+- `score`: Int (puntuación 1-5)
 - `comment`: String? (comentario opcional)
 - `timestamp`: Timestamp
 
 **Ejemplo de ruta:**
 
 ```
-/users/user123/ratings/rating456
+/ratings/rating123
+```
+
+**Consultas permitidas:**
+
+```kotlin
+// Ver calificaciones recibidas por un usuario
+firestore.collection("ratings")
+    .whereEqualTo("ratedUserId", userId)
+    .get()
+
+// Ver calificaciones dadas por un usuario
+firestore.collection("ratings")
+    .whereEqualTo("raterUserId", userId)
+    .get()
 ```
 
 ---
 
-### 2️⃣ **Colección: offers**
+### 3️⃣ **Colección: offers**
 
 ```javascript
 match /offers/{offerId} {
@@ -282,7 +328,7 @@ Resultado esperado: ✅ PERMITIDO
 
 ```
 Operación: get
-Ruta: /databases/(default)/documents/users/user123/ratings/rating456
+Ruta: /databases/(default)/documents/ratings/rating456
 Autenticado como: user789
 Resultado esperado: ✅ PERMITIDO
 ```
@@ -291,8 +337,8 @@ Resultado esperado: ✅ PERMITIDO
 
 ```
 Operación: update
-Ruta: /databases/(default)/documents/users/user123/ratings/rating456
-Datos: { raterUserId: "user789", score: 5, comment: "Excelente" }
+Ruta: /databases/(default)/documents/ratings/rating456
+Datos: { raterUserId: "user789", ratedUserId: "user123", score: 5, comment: "Excelente" }
 Autenticado como: user789
 Resultado esperado: ✅ PERMITIDO
 ```
@@ -301,8 +347,8 @@ Resultado esperado: ✅ PERMITIDO
 
 ```
 Operación: update
-Ruta: /databases/(default)/documents/users/user123/ratings/rating456
-Datos: { raterUserId: "user789", score: 5, comment: "Excelente" }
+Ruta: /databases/(default)/documents/ratings/rating456
+Datos: { raterUserId: "user789", ratedUserId: "user123", score: 5, comment: "Excelente" }
 Autenticado como: user999
 Resultado esperado: ❌ DENEGADO
 ```
@@ -338,13 +384,16 @@ Firestore Database
 │   │   ├── name: String
 │   │   ├── email: String
 │   │   ├── profilePictureUrl: String (opcional)
-│   │   ├── verified: Boolean
-│   │   └── ratings/ (subcolección)
-│   │       ├── {ratingId}
-│   │       │   ├── raterUserId: String
-│   │       │   ├── score: Int
-│   │       │   ├── comment: String (opcional)
-│   │       │   └── timestamp: Timestamp
+│   │   └── verified: Boolean
+│
+├── ratings/
+│   ├── {ratingId}
+│   │   ├── id: String
+│   │   ├── raterUserId: String
+│   │   ├── ratedUserId: String
+│   │   ├── score: Int
+│   │   ├── comment: String (opcional)
+│   │   └── timestamp: Timestamp
 │
 ├── offers/
 │   ├── {offerId}
@@ -381,12 +430,14 @@ Firestore Database
 - ✅ El campo `profilePictureUrl` está protegido
 - ✅ Solo usuarios autenticados pueden leer perfiles
 
-### Seguridad de Calificaciones (subcolección de users):
+### Seguridad de Calificaciones:
 
-- ✅ Cualquier usuario puede ver las calificaciones de otros
-- ✅ Cualquier usuario puede crear una calificación
-- ✅ Solo el creador (raterUserId) puede modificar su calificación
-- ✅ Las calificaciones están anidadas bajo cada usuario
+- ✅ Cualquier usuario puede ver las calificaciones
+- ✅ Solo puedes crear calificaciones a tu nombre (raterUserId debe coincidir con tu UID)
+- ✅ No puedes calificarte a ti mismo (raterUserId != ratedUserId)
+- ✅ El score debe estar entre 1 y 5
+- ✅ Solo el creador puede modificar/eliminar su calificación
+- ✅ Las calificaciones están en una colección separada para consultas flexibles
 
 ### Seguridad de Ofertas:
 
@@ -423,12 +474,13 @@ Firestore Database
 
 ### ❌ Error al leer calificaciones
 
-**Causa:** Las calificaciones son una subcolección, asegúrate de usar la ruta correcta
+**Causa:** Asegúrate de usar la ruta correcta de la colección
 
 **Solución:**
 
-- Ruta correcta: `/users/{userId}/ratings/{ratingId}`
-- No: `/ratings/{ratingId}` (esto no existe como colección raíz)
+- Ruta correcta: `/ratings/{ratingId}` (colección raíz)
+- Consulta correcta: `firestore.collection("ratings").whereEqualTo("ratedUserId", userId)`
+- No: `/users/{userId}/ratings/{ratingId}` (esto ya no existe como subcolección)
 
 ### ❌ Error al leer chats
 
@@ -491,9 +543,10 @@ Las reglas de Firestore están configuradas para:
 
 ## 🆕 Cambios Principales vs Versión Anterior
 
-1. **Ratings es ahora una subcolección de users**
-    - Antes: `/ratings/{ratingId}`
-    - Ahora: `/users/{userId}/ratings/{ratingId}`
+1. **Ratings es ahora una colección separada**
+    - Antes: `/users/{userId}/ratings/{ratingId}` (subcolección)
+    - Ahora: `/ratings/{ratingId}` (colección raíz)
+    - Nuevo campo: `ratedUserId` para identificar al usuario calificado
 
 2. **Ofertas incluyen origen**
     - Nuevo campo: `origin: String`

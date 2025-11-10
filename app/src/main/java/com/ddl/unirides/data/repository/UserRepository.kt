@@ -14,7 +14,8 @@ import javax.inject.Singleton
 @Singleton
 class UserRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val ratingRepository: RatingRepository
 ) {
 
     suspend fun getUserProfile(userId: String): Result<User> {
@@ -63,45 +64,13 @@ class UserRepository @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    suspend fun getRatings(userId: String): Result<List<Rating>> {
-        return try {
-            val snapshot = firestore.collection("users")
-                .document(userId)
-                .collection("ratings")
-                .get()
-                .await()
 
-            val ratings = snapshot.documents.mapNotNull { doc ->
-                doc.toObject(Rating::class.java)?.copy(id = doc.id)
-            }
-
-            Result.success(ratings)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    fun getRatingsFlow(userId: String): Flow<Result<List<Rating>>> = callbackFlow {
-        val listener = firestore.collection("users")
-            .document(userId)
-            .collection("ratings")
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(Result.failure(error))
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    val ratings = snapshot.documents.mapNotNull { doc ->
-                        doc.toObject(Rating::class.java)?.copy(id = doc.id)
-                    }
-                    trySend(Result.success(ratings))
-                } else {
-                    trySend(Result.failure(Exception("Error al obtener ratings")))
-                }
-            }
-
-        awaitClose { listener.remove() }
+    /**
+     * Obtiene las calificaciones de un usuario en tiempo real
+     * Delega al RatingRepository
+     */
+    fun getRatingsFlow(userId: String): Flow<Result<List<Rating>>> {
+        return ratingRepository.getUserRatingsFlow(userId)
     }
 
     fun getCurrentUserId(): String? = auth.currentUser?.uid
