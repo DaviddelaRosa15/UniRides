@@ -34,7 +34,7 @@ class OfferRepository @Inject constructor(
                         doc.toObject(Offer::class.java)?.copy(id = doc.id)
                     }
                     // Ordenar por fecha en el cliente (descendente - más recientes primero)
-                    val sortedOffers = offers.sortedByDescending { it.date.toDate() }
+                    val sortedOffers = offers.sortedByDescending { it.dateTime.toDate() }
                     trySend(Result.success(sortedOffers))
                 } else {
                     trySend(Result.failure(Exception("Error al obtener ofertas")))

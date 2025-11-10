@@ -73,11 +73,12 @@ class OfferRideViewModel @Inject constructor(
                     return@launch
                 }
 
-                // Convertir fecha string a Timestamp
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                val date = dateFormat.parse(_uiState.value.date)
-                val timestamp = if (date != null) {
-                    Timestamp(date)
+                // Convertir fecha y hora a Timestamp combinado
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                val dateTimeString = "${_uiState.value.date} ${_uiState.value.time}"
+                val dateTime = dateFormat.parse(dateTimeString)
+                val timestamp = if (dateTime != null) {
+                    Timestamp(dateTime)
                 } else {
                     Timestamp.now()
                 }
@@ -86,8 +87,7 @@ class OfferRideViewModel @Inject constructor(
                     publisherUserId = currentUserId,
                     origin = _uiState.value.origin.trim(),
                     destination = _uiState.value.destination.trim(),
-                    date = timestamp,
-                    time = _uiState.value.time,
+                    dateTime = timestamp,
                     availableSeats = _uiState.value.availableSeats,
                     price = _uiState.value.price.toDoubleOrNull() ?: 0.0,
                     details = _uiState.value.notes.trim().ifEmpty { null }

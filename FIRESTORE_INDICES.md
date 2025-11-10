@@ -11,11 +11,11 @@ Para que funcione la consulta de "Mis Viajes", necesitas crear un índice compue
 3. En el menú lateral: **Firestore Database** → **Índices**
 4. Click en **"Crear índice"**
 5. Configura así:
-   - **Colección:** `offers`
-   - **Campos a indexar:**
-     - Campo: `publisherUserId` → Orden: **Ascending**
-     - Campo: `date` → Orden: **Descending**
-   - **Ámbito de consulta:** Collection
+    - **Colección:** `offers`
+    - **Campos a indexar:**
+        - Campo: `publisherUserId` → Orden: **Ascending**
+        - Campo: `dateTime` → Orden: **Descending**
+    - **Ámbito de consulta:** Collection
 6. Click en **"Crear"**
 7. Espera 2-5 minutos hasta que el estado sea "Habilitado"
 
@@ -30,7 +30,7 @@ Campos indexados:
 │ Campo            │ Orden       │
 ├──────────────────┼─────────────┤
 │ publisherUserId  │ Ascending   │
-│ date             │ Descending  │
+│ dateTime         │ Descending  │
 └──────────────────┴─────────────┘
 ```
 

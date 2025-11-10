@@ -207,11 +207,11 @@ private fun StatusBadge(isActive: Boolean) {
 
 private fun formatDateTime(offer: Offer): String {
     return try {
-        val date = offer.date.toDate()
+        val date = offer.dateTime.toDate()
         val dateFormat = SimpleDateFormat("MMM dd, hh:mm a", Locale.forLanguageTag("es-ES"))
         dateFormat.format(date)
     } catch (_: Exception) {
-        "${offer.date.toDate().toString().substring(4, 10)}, ${offer.time}"
+        offer.dateTime.toDate().toString().substring(4, 16)
     }
 }
 

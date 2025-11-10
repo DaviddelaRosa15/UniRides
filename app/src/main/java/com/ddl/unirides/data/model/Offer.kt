@@ -7,8 +7,7 @@ data class Offer(
     val publisherUserId: String = "",
     val destination: String = "",
     val origin: String = "",
-    val date: Timestamp = Timestamp.now(),
-    val time: String = "",
+    val dateTime: Timestamp = Timestamp.now(),
     val price: Double = 0.0,
     val availableSeats: Int = 0,
     val details: String? = null
