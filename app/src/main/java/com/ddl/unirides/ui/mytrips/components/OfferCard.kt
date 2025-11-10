@@ -1,6 +1,5 @@
 package com.ddl.unirides.ui.mytrips.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.EventSeat
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -106,24 +104,13 @@ fun OfferCard(
             ) {
                 // Precio (solo si > 0)
                 if (offer.price > 0) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AttachMoney,
-                            contentDescription = "Precio",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = String.format(Locale.US, "$%.2f", offer.price),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 16.sp
-                        )
-                    }
+                    Text(
+                        text = String.format(Locale.US, "$%.2f", offer.price),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 16.sp
+                    )
                 } else {
                     Spacer(modifier = Modifier.width(1.dp))
                 }
@@ -147,61 +134,7 @@ fun OfferCard(
                     )
                 }
             }
-
-            // Estado (Activo solo si hay asientos disponibles)
-            if (offer.availableSeats > 0) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    StatusBadge(isActive = true)
-                }
-            }
         }
-    }
-}
-
-@Composable
-private fun StatusBadge(isActive: Boolean) {
-    Row(
-        modifier = Modifier
-            .background(
-                color = if (isActive) {
-                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                } else {
-                    MaterialTheme.colorScheme.surfaceVariant
-                },
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Punto indicador
-        androidx.compose.foundation.Canvas(
-            modifier = Modifier.size(8.dp)
-        ) {
-            drawCircle(
-                color = if (isActive) {
-                    androidx.compose.ui.graphics.Color(0xFF4CAF50)
-                } else {
-                    androidx.compose.ui.graphics.Color(0xFF9E9E9E)
-                }
-            )
-        }
-
-        Spacer(modifier = Modifier.width(6.dp))
-
-        Text(
-            text = if (isActive) "Activo" else "Completo",
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = if (isActive) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            fontSize = 12.sp
-        )
     }
 }
 
