@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,10 +62,16 @@ fun FilterChips(
             },
             trailingIcon = if (fromDate != null && toDate != null) {
                 {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Limpiar"
-                    )
+                    IconButton(
+                        onClick = onClearDateTime,
+                        modifier = Modifier.size(18.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Limpiar",
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             } else null,
             colors = FilterChipDefaults.filterChipColors(

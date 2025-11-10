@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -95,7 +96,13 @@ fun DateTimeRangeDialog(
                     ) {
                         DatePicker(
                             state = fromDateState,
-                            title = { Text("Fecha inicial") }
+                            title = {
+                                Text(
+                                    text = "Fecha inicial",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
                         )
                     }
                 }
@@ -127,7 +134,13 @@ fun DateTimeRangeDialog(
                     ) {
                         DatePicker(
                             state = toDateState,
-                            title = { Text("Fecha final") }
+                            title = {
+                                Text(
+                                    text = "Fecha final",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
                         )
                     }
                 }

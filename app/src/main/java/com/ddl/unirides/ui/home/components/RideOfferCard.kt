@@ -26,10 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ddl.unirides.ui.common.ProfileAvatar
 import com.ddl.unirides.ui.home.OfferWithPublisher
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -71,29 +71,11 @@ fun RideOfferCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Avatar
-                    Surface(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape),
-                        color = MaterialTheme.colorScheme.primaryContainer
-                    ) {
-                        // TODO: Cargar imagen del usuario cuando esté disponible
-                        // Por ahora mostramos iniciales
-                        val initials = publisher?.name?.split(" ")
-                            ?.mapNotNull { it.firstOrNull()?.uppercaseChar() }
-                            ?.take(2)
-                            ?.joinToString("") ?: "?"
-
-                        Text(
-                            text = initials,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        )
-                    }
+                    // Avatar del usuario
+                    ProfileAvatar(
+                        imageUrl = publisher?.profilePictureUrl,
+                        size = 40.dp
+                    )
 
                     Spacer(modifier = Modifier.width(12.dp))
 
