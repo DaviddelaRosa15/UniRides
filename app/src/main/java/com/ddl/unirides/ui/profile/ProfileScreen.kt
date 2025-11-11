@@ -46,6 +46,7 @@ import com.ddl.unirides.ui.common.ProfileActionItem
 import com.ddl.unirides.ui.common.ProfileAvatar
 import com.ddl.unirides.ui.common.RatingBar
 import com.ddl.unirides.ui.theme.UniRidesTheme
+import com.ddl.unirides.util.UniversityUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +185,7 @@ private fun ProfileContent(
 
                     // University
                     Text(
-                        text = viewModel.getUniversity(user.email),
+                        text = UniversityUtils.getUniversityFromEmail(user.email),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

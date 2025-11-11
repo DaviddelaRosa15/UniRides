@@ -122,15 +122,4 @@ class ProfileViewModel @Inject constructor(
             _uiState.value = ProfileState()
         }
     }
-
-    fun getUniversity(email: String): String {
-        return try {
-            val domain = email.substringAfter("@").substringBefore(".edu")
-            domain.split(".").joinToString(" ") { word ->
-                word.replaceFirstChar { it.uppercase() }
-            }
-        } catch (_: Exception) {
-            "Universidad"
-        }
-    }
 }

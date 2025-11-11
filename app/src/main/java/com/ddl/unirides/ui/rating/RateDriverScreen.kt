@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ddl.unirides.ui.rating.components.DriverRatingCard
+import com.ddl.unirides.util.UniversityUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,7 +133,7 @@ fun RateDriverScreen(
                             ) { driverToRate ->
                                 DriverRatingCard(
                                     driverToRate = driverToRate,
-                                    university = viewModel.getUniversity(driverToRate.driver.email),
+                                    university = UniversityUtils.getUniversityFromEmail(driverToRate.driver.email),
                                     onRatingChanged = { rating ->
                                         viewModel.onRatingChanged(driverToRate.driver.id, rating)
                                     }

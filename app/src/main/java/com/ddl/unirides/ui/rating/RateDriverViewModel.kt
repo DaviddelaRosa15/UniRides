@@ -124,23 +124,5 @@ class RateDriverViewModel @Inject constructor(
             )
         }
     }
-
-    fun getUniversity(email: String): String {
-        return when {
-            email.endsWith("@pucmm.edu.do", ignoreCase = true) -> "PUCMM"
-            email.endsWith("@intec.edu.do", ignoreCase = true) -> "INTEC"
-            email.endsWith("@unphu.edu.do", ignoreCase = true) -> "UNPHU"
-            email.endsWith("@uasd.edu.do", ignoreCase = true) -> "UASD"
-            email.endsWith("@unibe.edu.do", ignoreCase = true) -> "UNIBE"
-            email.endsWith("@ucsd.edu.do", ignoreCase = true) -> "UCSD"
-            email.endsWith("@utesa.edu", ignoreCase = true) -> "UTESA"
-            email.endsWith("@ufhec.edu.do", ignoreCase = true) -> "UFHEC"
-            email.endsWith("@ucne.edu", ignoreCase = true) -> "UCNE"
-            email.endsWith("@unicda.edu.do", ignoreCase = true) -> "UNICDA"
-            email.endsWith("@itla.edu.do", ignoreCase = true) -> "ITLA"
-            email.endsWith("@o-m.edu.do", ignoreCase = true) -> "O&M"
-            else -> "Universidad"
-        }
-    }
 }
 
