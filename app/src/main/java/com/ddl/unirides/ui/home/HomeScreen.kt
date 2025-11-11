@@ -40,7 +40,7 @@ fun HomeScreen(
     onMyTripsClick: () -> Unit = {},
     onChatListClick: () -> Unit = {},
     onOfferClick: (String) -> Unit = {},
-    onChatWithUserClick: (String, String) -> Unit = { _, _ -> },
+    onNavigateToChatDetail: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -165,10 +165,13 @@ fun HomeScreen(
                                             onOfferClick(offerWithPublisher.offer.id)
                                         },
                                         onChatClick = {
-                                            onChatWithUserClick(
-                                                offerWithPublisher.offer.id,
-                                                offerWithPublisher.offer.publisherUserId
-                                            )
+                                            scope.launch {
+                                                val chatId = viewModel.createOrGetChat(
+                                                    offerId = offerWithPublisher.offer.id,
+                                                    otherUserId = offerWithPublisher.offer.publisherUserId
+                                                )
+                                                chatId?.let { onNavigateToChatDetail(it) }
+                                            }
                                         }
                                     )
                                 }

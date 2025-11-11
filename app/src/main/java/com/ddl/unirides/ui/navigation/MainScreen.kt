@@ -18,10 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ddl.unirides.ui.common.BottomNavigationBar
 import com.ddl.unirides.ui.home.HomeScreen
 import com.ddl.unirides.ui.mytrips.MyTripsScreen
@@ -41,9 +43,9 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-
     // Determinar si debemos mostrar el bottom bar
-    val shouldShowBottomBar = currentRoute != Screen.Offer.route
+    val shouldShowBottomBar = currentRoute != Screen.Offer.route &&
+            !(currentRoute?.startsWith("chat_detail/") ?: false)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -100,8 +102,8 @@ fun MainScreen(
                     onOfferClick = { offerId ->
                         // TODO: Navegar a detalle de oferta
                     },
-                    onChatWithUserClick = { offerId, userId ->
-                        // TODO: Navegar a chat con usuario específico
+                    onNavigateToChatDetail = { chatId ->
+                        navController.navigate(Screen.ChatDetail.createRoute(chatId))
                     }
                 )
             }
@@ -118,9 +120,11 @@ fun MainScreen(
             }
 
             composable(Screen.ChatList.route) {
-                // TODO: Implementar pantalla de lista de chats
-                PlaceholderScreenContent(
-                    screenName = "Chats"
+                com.ddl.unirides.ui.chat.ChatsScreen(
+                    onChatClick = { chatId ->
+                        // TODO: Navegar a detalle del chat
+                        navController.navigate(Screen.ChatDetail.createRoute(chatId))
+                    }
                 )
             }
 
@@ -157,6 +161,24 @@ fun MainScreen(
                 com.ddl.unirides.ui.rating.RateDriverScreen(
                     onNavigateBack = {
                         navController.navigateUp()
+                    }
+                )
+            }
+
+            // Pantalla de detalle de chat
+            composable(
+                route = Screen.ChatDetail.route,
+                arguments = listOf(
+                    navArgument("chatId") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+                com.ddl.unirides.ui.chatdetail.ChatDetailScreenPlaceholder(
+                    chatId = chatId,
+                    onNavigateBack = {
+                        navController.popBackStack()
                     }
                 )
             }

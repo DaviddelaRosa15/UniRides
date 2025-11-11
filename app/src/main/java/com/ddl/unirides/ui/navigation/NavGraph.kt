@@ -167,13 +167,27 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
-            // TODO: Implementar ChatDetailScreen
-            PlaceholderScreen(
-                screenName = "Chat Detail: $chatId",
-                onNavigate = {
-                    navController.popBackStack()
+
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                // Usando placeholder temporal hasta implementar la pantalla final
+                com.ddl.unirides.ui.chatdetail.ChatDetailScreenPlaceholder(
+                    chatId = chatId,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         // ==================== PERFIL DE USUARIO ====================

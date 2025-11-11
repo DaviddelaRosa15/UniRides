@@ -16,85 +16,109 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // ==================== USUARIOS ====================
     // Regla para la colección de usuarios
     match /users/{userId} {
       // Permitir lectura si estás autenticado
       allow read: if request.auth != null;
-      
+
       // Permitir crear tu propio documento al registrarte
       allow create: if request.auth != null && request.auth.uid == userId;
-      
+
       // Permitir actualizar solo tu propio perfil
       allow update: if request.auth != null && request.auth.uid == userId;
-      
+
       // Permitir eliminar solo tu propio perfil
       allow delete: if request.auth != null && request.auth.uid == userId;
     }
-    
+
     // ==================== CALIFICACIONES ====================
     // Regla para la colección de calificaciones (ratings)
     match /ratings/{ratingId} {
       // Cualquier usuario autenticado puede leer calificaciones
       allow read: if request.auth != null;
-      
+
       // Solo usuarios autenticados pueden crear calificaciones
       // Validaciones: el usuario autenticado debe ser quien califica y no puede calificarse a sí mismo
       allow create: if request.auth != null
                     && request.auth.uid == request.resource.data.raterUserId
                     && request.resource.data.raterUserId != request.resource.data.ratedUserId
-                    && request.resource.data.score >= 1 
+                    && request.resource.data.score >= 1
                     && request.resource.data.score <= 5;
-      
+
       // Solo el creador puede actualizar su calificación
       allow update: if request.auth != null
                     && request.auth.uid == resource.data.raterUserId
-                    && request.resource.data.score >= 1 
+                    && request.resource.data.score >= 1
                     && request.resource.data.score <= 5;
-      
+
       // Solo el creador puede eliminar su calificación
       allow delete: if request.auth != null
                     && request.auth.uid == resource.data.raterUserId;
     }
-    
+
     // ==================== OFERTAS DE VIAJE ====================
     // Regla para la colección de ofertas (viajes)
     match /offers/{offerId} {
       // Cualquier usuario autenticado puede leer ofertas
       allow read: if request.auth != null;
-      
+
       // Solo usuarios autenticados pueden crear ofertas
       allow create: if request.auth != null;
-      
+
       // Solo el creador puede actualizar/eliminar su oferta
-      allow update, delete: if request.auth != null && 
+      allow update, delete: if request.auth != null &&
         resource.data.publisherUserId == request.auth.uid;
     }
-    
+
     // ==================== CHATS ====================
     // Regla para la colección de chats
     match /chats/{chatId} {
-      // Solo los participantes del chat pueden leerlo
-      allow read: if request.auth != null && 
-        (resource.data.user1Id == request.auth.uid || 
+      // Permitir lectura si el usuario es participante del chat
+      allow read: if request.auth != null &&
+        (resource.data.user1Id == request.auth.uid ||
          resource.data.user2Id == request.auth.uid);
-      
-      // Usuarios autenticados pueden crear chats
-      allow create: if request.auth != null;
-      
-      // Solo participantes pueden actualizar
-      allow update: if request.auth != null && 
-        (resource.data.user1Id == request.auth.uid || 
+
+      // Permitir crear un chat si el usuario autenticado es uno de los participantes
+      allow create: if request.auth != null &&
+        (request.resource.data.user1Id == request.auth.uid ||
+         request.resource.data.user2Id == request.auth.uid);
+
+      // Permitir actualizar solo el timestamp del último mensaje e id
+      allow update: if request.auth != null &&
+        (resource.data.user1Id == request.auth.uid ||
+         resource.data.user2Id == request.auth.uid) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessageTimestamp', 'id']);
+
+      // Permitir eliminar si el usuario es participante
+      allow delete: if request.auth != null &&
+        (resource.data.user1Id == request.auth.uid ||
          resource.data.user2Id == request.auth.uid);
-      
-      // Subcolección de mensajes
+
+      // Reglas para la subcolección de mensajes
       match /messages/{messageId} {
-        // Solo participantes del chat pueden leer mensajes
-        allow read: if request.auth != null;
-        
-        // Solo participantes pueden crear mensajes
-        allow create: if request.auth != null;
+        // Permitir leer mensajes si el usuario es participante del chat padre
+        allow read: if request.auth != null &&
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
+
+        // Permitir crear mensajes si el usuario es participante y el senderId es el usuario autenticado
+        allow create: if request.auth != null &&
+          request.resource.data.senderId == request.auth.uid &&
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
+
+        // Permitir actualizar solo el campo isRead
+        allow update: if request.auth != null &&
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid) &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead']);
+
+        // Permitir eliminar si el usuario es participante del chat
+        allow delete: if request.auth != null &&
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
       }
     }
   }
@@ -137,18 +161,18 @@ match /users/{userId} {
 ```javascript
 match /ratings/{ratingId} {
   allow read: if request.auth != null;
-  
+
   allow create: if request.auth != null
                 && request.auth.uid == request.resource.data.raterUserId
                 && request.resource.data.raterUserId != request.resource.data.ratedUserId
-                && request.resource.data.score >= 1 
+                && request.resource.data.score >= 1
                 && request.resource.data.score <= 5;
-  
+
   allow update: if request.auth != null
                 && request.auth.uid == resource.data.raterUserId
-                && request.resource.data.score >= 1 
+                && request.resource.data.score >= 1
                 && request.resource.data.score <= 5;
-  
+
   allow delete: if request.auth != null
                 && request.auth.uid == resource.data.raterUserId;
 }
@@ -199,7 +223,7 @@ firestore.collection("ratings")
 match /offers/{offerId} {
   allow read: if request.auth != null;
   allow create: if request.auth != null;
-  allow update, delete: if request.auth != null && 
+  allow update, delete: if request.auth != null &&
     resource.data.publisherUserId == request.auth.uid;
 }
 ```
@@ -211,16 +235,40 @@ match /offers/{offerId} {
 - ✅ **Actualización/Eliminación**: Solo el creador de la oferta puede modificarla/eliminarla
 
 **Validación importante:**
+allow create: if request.auth != null &&
+(request.resource.data.user1Id == request.auth.uid ||
+request.resource.data.user2Id == request.auth.uid);
 
 - Se valida que `publisherUserId` coincida con el UID del usuario autenticado
 
-**Campos de offer:**
+  (resource.data.user1Id == request.auth.uid ||
+  resource.data.user2Id == request.auth.uid) &&
+  request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessageTimestamp']);
+
+  allow delete: if request.auth != null &&
+  **Campos de offer:**
 
 - `publisherUserId`: String (ID del publicador)
 - `destination`: String (destino)
 - `origin`: String (origen)
-- `date`: Timestamp (fecha del viaje)
-- `time`: String (hora)
+  allow read: if request.auth != null &&
+  (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+  get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
+
+  allow create: if request.auth != null &&
+  request.resource.data.senderId == request.auth.uid &&
+  (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+  get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
+
+  allow update: if request.auth != null &&
+  (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+  get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid) &&
+  request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead']);
+
+  allow delete: if request.auth != null &&
+  (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
+  get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
+
 - `price`: Double (precio)
 - `availableSeats`: Int (asientos disponibles)
 - `details`: String? (detalles adicionales opcionales)
@@ -229,33 +277,48 @@ match /offers/{offerId} {
 
 ### 3️⃣ **Colección: chats**
 
-```javascript
-match /chats/{chatId} {
-  allow read: if request.auth != null && 
-    (resource.data.user1Id == request.auth.uid || 
-     resource.data.user2Id == request.auth.uid);
-  
+- ✅ **Creación**: Solo puedes crear chats donde tú eres uno de los participantes (user1Id o user2Id
+  debe ser tu UID)
+- ✅ **Actualización**: Solo los participantes pueden actualizar, y SOLO el campo
+  `lastMessageTimestamp`
+- ✅ **Eliminación**: Solo los participantes pueden eliminar el chat completo
+  match /chats/{chatId} {
+  allow read: if request.auth != null &&
+  (resource.data.user1Id == request.auth.uid ||
+  resource.data.user2Id == request.auth.uid);
+
+- Al crear un chat, debes ser uno de los participantes
+- Las actualizaciones están limitadas solo al timestamp del último mensaje
   allow create: if request.auth != null;
-  
-  allow update: if request.auth != null && 
-    (resource.data.user1Id == request.auth.uid || 
-     resource.data.user2Id == request.auth.uid);
-  
+
+  allow update: if request.auth != null &&
+  (resource.data.user1Id == request.auth.uid ||
+  resource.data.user2Id == request.auth.uid);
+
   // Subcolección de mensajes
   match /messages/{messageId} {
-    allow read: if request.auth != null;
-    allow create: if request.auth != null;
-  }
-}
+  allow read: if request.auth != null;
+  allow create: if request.auth != null;
+
+- ✅ **Lectura**: Solo los participantes del chat padre pueden leer mensajes
+- ✅ **Creación**: Solo los participantes pueden crear mensajes, y el `senderId` debe ser tu UID
+- ✅ **Actualización**: Solo los participantes pueden actualizar, y SOLO el campo `isRead`
+- ✅ **Eliminación**: Solo los participantes pueden eliminar mensajes
+
 ```
 
 **Permisos del chat:**
 
 - ✅ **Lectura**: Solo los dos participantes del chat pueden verlo
 - ✅ **Creación**: Cualquier usuario autenticado puede iniciar un chat
+- `isRead`: Boolean (indica si el mensaje fue leído)
 - ✅ **Actualización**: Solo los participantes pueden actualizar el chat
+**Validaciones de seguridad importantes:**
 
-**Validación de privacidad:**
+- Los mensajes solo pueden ser creados por participantes del chat
+- El `senderId` debe coincidir con el UID del usuario autenticado (no puedes enviar mensajes a nombre de otro)
+- Solo se puede actualizar el campo `isRead` (para marcar mensajes como leídos)
+- La lectura de mensajes requiere verificar que eres participante del chat padre
 
 - Se verifica que el usuario es `user1Id` o `user2Id` del chat
 - Otros usuarios NO pueden ver chats ajenos
@@ -284,7 +347,9 @@ acceder a los mensajes.
 **Ejemplo de ruta:**
 
 ```
+
 /chats/chat123/messages/message456
+
 ```
 
 ---
@@ -309,68 +374,82 @@ Firebase Console incluye un **simulador de reglas**. Prueba estos escenarios:
 ### Escenario 1: Lectura de perfil ✅
 
 ```
+
 Operación: get
 Ruta: /databases/(default)/documents/users/user123
 Autenticado como: user456
 Resultado esperado: ✅ PERMITIDO
+
 ```
 
 ### Escenario 2: Actualización de perfil propio ✅
 
 ```
+
 Operación: update
 Ruta: /databases/(default)/documents/users/user123
 Autenticado como: user123
 Resultado esperado: ✅ PERMITIDO
+
 ```
 
 ### Escenario 3: Lectura de calificaciones de un usuario ✅
 
 ```
+
 Operación: get
 Ruta: /databases/(default)/documents/ratings/rating456
 Autenticado como: user789
 Resultado esperado: ✅ PERMITIDO
+
 ```
 
 ### Escenario 4: Actualizar calificación propia ✅
 
 ```
+
 Operación: update
 Ruta: /databases/(default)/documents/ratings/rating456
 Datos: { raterUserId: "user789", ratedUserId: "user123", score: 5, comment: "Excelente" }
 Autenticado como: user789
 Resultado esperado: ✅ PERMITIDO
+
 ```
 
 ### Escenario 5: Actualizar calificación ajena ❌
 
 ```
+
 Operación: update
 Ruta: /databases/(default)/documents/ratings/rating456
 Datos: { raterUserId: "user789", ratedUserId: "user123", score: 5, comment: "Excelente" }
 Autenticado como: user999
 Resultado esperado: ❌ DENEGADO
+
 ```
 
 ### Escenario 6: Lectura de chat propio ✅
 
 ```
+
 Operación: get
 Ruta: /databases/(default)/documents/chats/chat123
 Datos del chat: { user1Id: "user123", user2Id: "user456", offerId: "offer789" }
 Autenticado como: user123
 Resultado esperado: ✅ PERMITIDO
+
 ```
 
 ### Escenario 7: Lectura de chat ajeno ❌
 
 ```
+
 Operación: get
 Ruta: /databases/(default)/documents/chats/chat123
 Datos del chat: { user1Id: "user123", user2Id: "user456", offerId: "offer789" }
 Autenticado como: user789
 Resultado esperado: ❌ DENEGADO
+
 ```
 
 ---
@@ -378,45 +457,52 @@ Resultado esperado: ❌ DENEGADO
 ## 📊 Estructura de Colecciones (Actualizada)
 
 ```
+
 Firestore Database
 ├── users/
-│   ├── {userId}
-│   │   ├── name: String
-│   │   ├── email: String
-│   │   ├── profilePictureUrl: String (opcional)
-│   │   └── verified: Boolean
+│ ├── {userId}
+│ │ ├── name: String
+│ │ ├── email: String
+│ │ ├── profilePictureUrl: String (opcional)
+│ │ └── verified: Boolean
 │
 ├── ratings/
-│   ├── {ratingId}
-│   │   ├── id: String
-│   │   ├── raterUserId: String
-│   │   ├── ratedUserId: String
-│   │   ├── score: Int
-│   │   ├── comment: String (opcional)
-│   │   └── timestamp: Timestamp
+│ ├── {ratingId}
+│ │ ├── id: String
+│ │ ├── raterUserId: String
+│ │ ├── ratedUserId: String
+│ │ ├── score: Int
+│ │ ├── comment: String (opcional)
+│ │ └── timestamp: Timestamp
 │
-├── offers/
-│   ├── {offerId}
-│   │   ├── publisherUserId: String
-│   │   ├── destination: String
-│   │   ├── origin: String
-│   │   ├── date: Timestamp
-│   │   ├── time: String
-│   │   ├── price: Double
-│   │   ├── availableSeats: Int
-│   │   └── details: String (opcional)
-│
-└── chats/
-    ├── {chatId}
-    │   ├── user1Id: String
-    │   ├── user2Id: String
-    │   ├── offerId: String
-    │   ├── lastMessageTimestamp: Timestamp
-    │   └── messages/ (subcolección)
-    │       ├── {messageId}
-    │       │   ├── senderId: String
-    │       │   ├── content: String
-    │       │   └── timestamp: Timestamp
+
+- ✅ Al crear un chat, debes ser uno de los participantes
+- ✅ Solo se pueden actualizar los campos `lastMessageTimestamp` e `id` del chat
+- ✅ Los mensajes solo pueden ser leídos por participantes del chat padre
+- ✅ El `senderId` de un mensaje debe coincidir con el UID del usuario autenticado
+- ✅ Solo se puede actualizar el campo `isRead` de los mensajes
+  │ ├── {offerId}
+  │ │ ├── publisherUserId: String
+  │ │ ├── destination: String
+  │ │ ├── origin: String
+  │ │ ├── date: Timestamp
+  │ │ ├── time: String
+  │ │ ├── price: Double
+  │ │ ├── availableSeats: Int
+  │ │ └── details: String (opcional)
+  │
+  └── chats/
+  ├── {chatId}
+  │ ├── user1Id: String
+  │ ├── user2Id: String
+  │ ├── offerId: String
+  │ ├── lastMessageTimestamp: Timestamp
+  │ └── messages/ (subcolección)
+  │ ├── {messageId}
+  │ │ ├── senderId: String
+  │ │ ├── content: String
+  │ │ └── timestamp: Timestamp
+
 ```
 
 ---
@@ -574,3 +660,4 @@ Las reglas de Firestore están configuradas para:
 ---
 
 **Última actualización:** Noviembre 2025
+```

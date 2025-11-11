@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ddl.unirides.data.repository.UserRepository
 import com.ddl.unirides.domain.usecase.GetAllAvailableOffersUseCase
+import com.ddl.unirides.domain.usecase.chat.GetOrCreateChatUseCase
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAllAvailableOffersUseCase: GetAllAvailableOffersUseCase,
+    private val getOrCreateChatUseCase: GetOrCreateChatUseCase,
     private val userRepository: UserRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -231,6 +233,19 @@ class HomeViewModel @Inject constructor(
             matchesSearch && matchesDateRange && matchesPrice && matchesSeats
         }
             .sortedByDescending { it.offer.dateTime.toDate() } // Ordenar por fecha (más recientes primero)
+    }
+
+    /**
+     * Crea o obtiene un chat existente con el conductor
+     * Retorna el chatId si tuvo éxito, null en caso contrario
+     */
+    suspend fun createOrGetChat(offerId: String, otherUserId: String): String? {
+        return try {
+            val result = getOrCreateChatUseCase(otherUserId, offerId)
+            result.getOrNull()?.id
+        } catch (_: Exception) {
+            null
+        }
     }
 }
 
