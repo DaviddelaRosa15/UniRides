@@ -43,6 +43,29 @@ class RatingRepository @Inject constructor(
     }
 
     /**
+     * Obtiene todas las calificaciones de un usuario específico (versión suspendida)
+     *
+     * @param userId ID del usuario del cual se quieren obtener las calificaciones
+     * @return Result con lista de calificaciones
+     */
+    suspend fun getUserRatings(userId: String): Result<List<Rating>> {
+        return try {
+            val snapshot = firestore.collection("ratings")
+                .whereEqualTo("ratedUserId", userId)
+                .get()
+                .await()
+
+            val ratings = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(Rating::class.java)?.copy(id = doc.id)
+            }
+
+            Result.success(ratings)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Crea una nueva calificación
      *
      * @param rating Calificación a crear

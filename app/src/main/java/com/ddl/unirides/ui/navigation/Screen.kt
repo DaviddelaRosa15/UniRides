@@ -17,6 +17,7 @@ sealed class Screen(val route: String) {
     object Offer : Screen("offer")
     object ChatList : Screen("chat_list")
     object Profile : Screen("profile")
+    object RateDriver : Screen("rate_driver")
 
     // Pantallas con parámetros
     object ChatDetail : Screen("chat_detail/{chatId}") {

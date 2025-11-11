@@ -73,5 +73,25 @@ class UserRepository @Inject constructor(
         return ratingRepository.getUserRatingsFlow(userId)
     }
 
+    /**
+     * Obtiene todos los usuarios verificados
+     */
+    suspend fun getAllVerifiedUsers(): Result<List<User>> {
+        return try {
+            val snapshot = firestore.collection("users")
+                .whereEqualTo("verified", true)
+                .get()
+                .await()
+
+            val users = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(User::class.java)?.copy(id = doc.id)
+            }
+
+            Result.success(users)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     fun getCurrentUserId(): String? = auth.currentUser?.uid
 }

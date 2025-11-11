@@ -75,7 +75,7 @@ fun MainScreen(
             composable(Screen.Home.route) {
                 HomeScreen(
                     onRateDriverClick = {
-                        // TODO: Navegar a pantalla de calificar conductor
+                        navController.navigate(Screen.RateDriver.route)
                     },
                     onMyTripsClick = {
                         viewModel.selectRoute(Screen.Search.route)
@@ -149,7 +149,15 @@ fun MainScreen(
                         }
                     },
                     onSignOut = onLogout,
-                    showTopBar = false
+                )
+            }
+
+            // Pantalla de calificar conductor
+            composable(Screen.RateDriver.route) {
+                com.ddl.unirides.ui.rating.RateDriverScreen(
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    }
                 )
             }
         }
