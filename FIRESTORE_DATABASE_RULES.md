@@ -113,7 +113,7 @@ service cloud.firestore {
         allow update: if request.auth != null &&
           (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
            get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid) &&
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['id', 'read']);
 
         // Permitir eliminar si el usuario es participante del chat
         allow delete: if request.auth != null &&

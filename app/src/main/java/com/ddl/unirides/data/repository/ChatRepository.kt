@@ -176,13 +176,17 @@ class ChatRepository @Inject constructor(
                 .add(message)
                 .await()
 
+            // Actualizar el documento del mensaje con su propio ID
+            val messageId = documentRef.id
+            documentRef.update("id", messageId).await()
+
             // Actualizar el timestamp del último mensaje en el chat
             firestore.collection(CHATS_COLLECTION)
                 .document(chatId)
                 .update("lastMessageTimestamp", message.timestamp)
                 .await()
 
-            Result.success(message.copy(id = documentRef.id))
+            Result.success(message.copy(id = messageId))
         } catch (e: Exception) {
             Result.failure(e)
         }

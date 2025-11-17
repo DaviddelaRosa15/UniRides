@@ -184,56 +184,62 @@ private fun ChatDetailTopBar(
 ) {
     TopAppBar(
         title = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+            // Box para centrar visualmente compensando el botón de navegación
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                // Ruta del viaje
-                Text(
-                    text = if (origin.isNotEmpty() && destination.isNotEmpty()) {
-                        "$origin → $destination"
-                    } else {
-                        "Cargando..."
-                    },
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                // Info del usuario
-                if (otherUser != null) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        // Avatar pequeño
-                        if (otherUser.profilePictureUrl != null) {
-                            Image(
-                                painter = rememberAsyncImagePainter(otherUser.profilePictureUrl),
-                                contentDescription = "Avatar de ${otherUser.name}",
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Ruta del viaje - más grande y flecha centrada
+                    Text(
+                        text = if (origin.isNotEmpty() && destination.isNotEmpty()) {
+                            "$origin  →  $destination"
                         } else {
-                            Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            "Cargando..."
+                        },
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    // Info del usuario - más grande y mejor centrado
+                    if (otherUser != null) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(top = 6.dp)
+                        ) {
+                            // Avatar más grande
+                            if (otherUser.profilePictureUrl != null) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(otherUser.profilePictureUrl),
+                                    contentDescription = "Avatar de ${otherUser.name}",
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(CircleShape),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.AccountCircle,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(28.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Text(
+                                text = otherUser.name,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        Text(
-                            text = otherUser.name,
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }
@@ -428,13 +434,14 @@ private fun MessageInputBar(
     isSending: Boolean
 ) {
     Surface(
-        shadowElevation = 8.dp,
-        tonalElevation = 3.dp,
-        color = MaterialTheme.colorScheme.surface
+        shadowElevation = 4.dp,
+        tonalElevation = 0.dp,
+        color = MaterialTheme.colorScheme.background
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -446,51 +453,61 @@ private fun MessageInputBar(
                     Text(
                         text = "Escribe un mensaje...",
                         fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                 },
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(28.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                    focusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface
                 ),
                 enabled = !isSending,
                 maxLines = 4
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             // Send button
-            IconButton(
-                onClick = onSendMessage,
-                enabled = currentMessage.isNotBlank() && !isSending,
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(
-                        color = if (currentMessage.isNotBlank() && !isSending) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant
-                        },
-                        shape = CircleShape
-                    )
-            ) {
-                if (isSending) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+            Surface(
+                onClick = {
+                    if (currentMessage.isNotBlank() && !isSending) {
+                        onSendMessage()
+                    }
+                },
+                modifier = Modifier.size(56.dp),
+                shape = CircleShape,
+                color = if (currentMessage.isNotBlank() && !isSending) {
+                    MaterialTheme.colorScheme.primary
                 } else {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Enviar mensaje",
-                        tint = if (currentMessage.isNotBlank()) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                    )
+                    MaterialTheme.colorScheme.surfaceVariant
+                },
+                shadowElevation = if (currentMessage.isNotBlank() && !isSending) 3.dp else 0.dp
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (isSending) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Enviar mensaje",
+                            tint = if (currentMessage.isNotBlank()) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            },
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         }

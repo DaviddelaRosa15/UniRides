@@ -116,7 +116,13 @@ class ChatDetailViewModel @Inject constructor(
         viewModelScope.launch {
             observeChatMessagesUseCase(chatId).collect { result ->
                 result.onSuccess { messages ->
+                    val previousMessageCount = _uiState.value.messages.size
                     _uiState.update { it.copy(messages = messages) }
+
+                    // Si hay nuevos mensajes, marcarlos como leídos
+                    if (messages.size > previousMessageCount) {
+                        markMessagesAsRead()
+                    }
                 }.onFailure { e ->
                     _uiState.update {
                         it.copy(error = "Error al cargar mensajes: ${e.message}")
