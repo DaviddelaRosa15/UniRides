@@ -7,5 +7,5 @@ data class Message(
     val senderId: String = "",
     val content: String = "",
     val timestamp: Timestamp = Timestamp.now(),
-    val isRead: Boolean = false
+    val read: Boolean = false
 )

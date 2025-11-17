@@ -180,10 +180,10 @@ fun NavGraph(
                     }
                 }
             ) {
-                // Usando placeholder temporal hasta implementar la pantalla final
-                com.ddl.unirides.ui.chatdetail.ChatDetailScreenPlaceholder(
-                    chatId = chatId,
-                    onNavigateBack = {
+                // TODO: Esta navegación se maneja dentro de MainScreen, este código no se usa
+                PlaceholderScreen(
+                    screenName = "Chat Detail",
+                    onNavigate = {
                         navController.popBackStack()
                     }
                 )

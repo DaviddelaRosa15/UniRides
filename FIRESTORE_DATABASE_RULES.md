@@ -109,11 +109,11 @@ service cloud.firestore {
           (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
            get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid);
 
-        // Permitir actualizar solo el campo isRead
+        // Permitir actualizar solo el campo read
         allow update: if request.auth != null &&
           (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
            get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid) &&
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead']);
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
 
         // Permitir eliminar si el usuario es participante del chat
         allow delete: if request.auth != null &&
@@ -263,7 +263,7 @@ request.resource.data.user2Id == request.auth.uid);
   allow update: if request.auth != null &&
   (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
   get(/databases/$(database)/documents/chats/$(chatId)).data.user2Id == request.auth.uid) &&
-  request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead']);
+  request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
 
   allow delete: if request.auth != null &&
   (get(/databases/$(database)/documents/chats/$(chatId)).data.user1Id == request.auth.uid ||
@@ -302,7 +302,7 @@ request.resource.data.user2Id == request.auth.uid);
 
 - ✅ **Lectura**: Solo los participantes del chat padre pueden leer mensajes
 - ✅ **Creación**: Solo los participantes pueden crear mensajes, y el `senderId` debe ser tu UID
-- ✅ **Actualización**: Solo los participantes pueden actualizar, y SOLO el campo `isRead`
+- ✅ **Actualización**: Solo los participantes pueden actualizar, y SOLO el campo `read`
 - ✅ **Eliminación**: Solo los participantes pueden eliminar mensajes
 
 ```
@@ -311,13 +311,13 @@ request.resource.data.user2Id == request.auth.uid);
 
 - ✅ **Lectura**: Solo los dos participantes del chat pueden verlo
 - ✅ **Creación**: Cualquier usuario autenticado puede iniciar un chat
-- `isRead`: Boolean (indica si el mensaje fue leído)
+- `read`: Boolean (indica si el mensaje fue leído)
 - ✅ **Actualización**: Solo los participantes pueden actualizar el chat
 **Validaciones de seguridad importantes:**
 
 - Los mensajes solo pueden ser creados por participantes del chat
 - El `senderId` debe coincidir con el UID del usuario autenticado (no puedes enviar mensajes a nombre de otro)
-- Solo se puede actualizar el campo `isRead` (para marcar mensajes como leídos)
+- Solo se puede actualizar el campo `read` (para marcar mensajes como leídos)
 - La lectura de mensajes requiere verificar que eres participante del chat padre
 
 - Se verifica que el usuario es `user1Id` o `user2Id` del chat
@@ -480,7 +480,7 @@ Firestore Database
 - ✅ Solo se pueden actualizar los campos `lastMessageTimestamp` e `id` del chat
 - ✅ Los mensajes solo pueden ser leídos por participantes del chat padre
 - ✅ El `senderId` de un mensaje debe coincidir con el UID del usuario autenticado
-- ✅ Solo se puede actualizar el campo `isRead` de los mensajes
+- ✅ Solo se puede actualizar el campo `read` de los mensajes
   │ ├── {offerId}
   │ │ ├── publisherUserId: String
   │ │ ├── destination: String

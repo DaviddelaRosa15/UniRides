@@ -175,10 +175,50 @@ fun MainScreen(
                 )
             ) { backStackEntry ->
                 val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
-                com.ddl.unirides.ui.chatdetail.ChatDetailScreenPlaceholder(
+                com.ddl.unirides.ui.chatdetail.ChatDetailScreen(
                     chatId = chatId,
                     onNavigateBack = {
                         navController.popBackStack()
+                    },
+                    onNavigateToHome = {
+                        viewModel.selectRoute(Screen.Home.route)
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToMyTrips = {
+                        viewModel.selectRoute(Screen.Search.route)
+                        navController.navigate(Screen.Search.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToChats = {
+                        viewModel.selectRoute(Screen.ChatList.route)
+                        navController.navigate(Screen.ChatList.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToProfile = {
+                        viewModel.selectRoute(Screen.Profile.route)
+                        navController.navigate(Screen.Profile.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }

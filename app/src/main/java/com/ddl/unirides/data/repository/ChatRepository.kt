@@ -166,7 +166,7 @@ class ChatRepository @Inject constructor(
                 senderId = senderId,
                 content = content,
                 timestamp = Timestamp.now(),
-                isRead = false
+                read = false
             )
 
             // Agregar mensaje a la subcolección
@@ -197,7 +197,7 @@ class ChatRepository @Inject constructor(
             val unreadMessages = firestore.collection(CHATS_COLLECTION)
                 .document(chatId)
                 .collection(MESSAGES_COLLECTION)
-                .whereEqualTo("isRead", false)
+                .whereEqualTo("read", false)
                 .get()
                 .await()
 
@@ -209,7 +209,7 @@ class ChatRepository @Inject constructor(
                     message?.senderId != currentUserId
                 }
                 .forEach { document ->
-                    batch.update(document.reference, "isRead", true)
+                    batch.update(document.reference, "read", true)
                 }
 
             batch.commit().await()
@@ -227,7 +227,7 @@ class ChatRepository @Inject constructor(
             val unreadMessages = firestore.collection(CHATS_COLLECTION)
                 .document(chatId)
                 .collection(MESSAGES_COLLECTION)
-                .whereEqualTo("isRead", false)
+                .whereEqualTo("read", false)
                 .get()
                 .await()
 
