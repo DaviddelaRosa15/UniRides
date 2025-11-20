@@ -21,6 +21,7 @@ import androidx.navigation.navArgument
 import com.ddl.unirides.ui.login.LoginScreen
 import com.ddl.unirides.ui.profile.ProfileScreen
 import com.ddl.unirides.ui.signup.SignUpScreen
+import com.ddl.unirides.ui.tripdetail.TripDetailScreen
 import com.ddl.unirides.ui.verification.EmailVerificationScreen
 
 /**
@@ -233,13 +234,31 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val offerId = backStackEntry.arguments?.getString("offerId") ?: ""
-            // TODO: Implementar OfferDetailScreen
-            PlaceholderScreen(
-                screenName = "Offer Detail: $offerId",
-                onNavigate = {
-                    navController.popBackStack()
+            ProtectedRoute(
+                onNotAuthenticated = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNotVerified = {
+                    navController.navigate(Screen.EmailVerification.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            )
+            ) {
+                TripDetailScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onDriverClick = { driverId ->
+                        // TODO: Implementar UserProfileScreen
+                        // navController.navigate(Screen.UserProfile.createRoute(driverId))
+                    },
+                    onChatClick = { chatId ->
+                        // La navegación al chat se maneja en MainScreen
+                    }
+                )
+            }
         }
 
         // ==================== PERFIL DE OTRO USUARIO ====================

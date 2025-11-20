@@ -1,22 +1,12 @@
 package com.ddl.unirides.ui.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -45,7 +35,8 @@ fun MainScreen(
 
     // Determinar si debemos mostrar el bottom bar
     val shouldShowBottomBar = currentRoute != Screen.Offer.route &&
-            !(currentRoute?.startsWith("chat_detail/") ?: false)
+            !(currentRoute?.startsWith("chat_detail/") ?: false) &&
+            !(currentRoute?.startsWith("offer_detail/") ?: false)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -100,7 +91,7 @@ fun MainScreen(
                         }
                     },
                     onOfferClick = { offerId ->
-                        // TODO: Navegar a detalle de oferta
+                        navController.navigate(Screen.OfferDetail.createRoute(offerId))
                     },
                     onNavigateToChatDetail = { chatId ->
                         navController.navigate(Screen.ChatDetail.createRoute(chatId))
@@ -111,7 +102,7 @@ fun MainScreen(
             composable(Screen.Search.route) {
                 MyTripsScreen(
                     onOfferClick = { offerId ->
-                        // TODO: Navegar a detalle de oferta
+                        navController.navigate(Screen.OfferDetail.createRoute(offerId))
                     },
                     onPublishClick = {
                         navController.navigate(Screen.Offer.route)
@@ -222,35 +213,32 @@ fun MainScreen(
                     }
                 )
             }
+
+            // Pantalla de detalle de viaje
+            composable(
+                route = Screen.OfferDetail.route,
+                arguments = listOf(
+                    navArgument("offerId") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val offerId = backStackEntry.arguments?.getString("offerId") ?: ""
+                com.ddl.unirides.ui.tripdetail.TripDetailScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onDriverClick = { driverId ->
+                        // TODO: Navegar al perfil del conductor cuando esté implementado
+                        // navController.navigate(Screen.UserProfile.createRoute(driverId))
+                    },
+                    onChatClick = { chatId ->
+                        navController.navigate(Screen.ChatDetail.createRoute(chatId))
+                    }
+                )
+            }
         }
     }
 }
 
-
-@Composable
-private fun PlaceholderScreenContent(screenName: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = screenName,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = "Próximamente",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
 
