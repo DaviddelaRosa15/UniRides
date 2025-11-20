@@ -2,7 +2,6 @@ package com.ddl.unirides.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -77,7 +76,7 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun UniRidesTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false, // Siempre usar tema claro
     // Dynamic color está disponible en Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
